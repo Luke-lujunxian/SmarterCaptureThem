@@ -8,13 +8,13 @@
 
   <DesignationDef>
     <defName>CaptureThemCapture_FirstAid</defName>
-    <texturePath>CaptureThemDesignation</texturePath>
+    <texturePath>CaptureThemDesignation_FA</texturePath>
     <targetType>Thing</targetType>
   </DesignationDef>
 
   <DesignationDef>
     <defName>CaptureThemCapture_CE</defName>
-    <texturePath>CaptureThemDesignation</texturePath>
+    <texturePath>CaptureThemDesignation_CE</texturePath>
     <targetType>Thing</targetType>
   </DesignationDef>
 </Defs>

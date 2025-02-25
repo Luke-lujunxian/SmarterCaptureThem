@@ -5,12 +5,13 @@ using System.Reflection;
 using Capture_Them.HarmonyPatches;
 using HarmonyLib;
 using SmartCaptureThem.HarmonyPatches;
+using UnityEngine;
 using Verse;
 
 namespace SmartCaptureThem;
 
 [StaticConstructorOnStartup]
-public static class StartUp
+public class StartUp : Mod
 {
     public static bool CE = false;
     public static bool FirstAid = false;
@@ -18,11 +19,13 @@ public static class StartUp
     public static JobDef CP_FirstAid;
     public static JobDef CEStablize;
     public static HashSet<String> deathrattleHediffs;
+    public static SmartCaptureThemSettings settings;
 
-    static StartUp()
+    public StartUp(ModContentPack content) : base(content)
     {
         var harmony = new Harmony("SmartCaptureThem.patch");
         harmony.Patch(AccessTools.Method(typeof(ReverseDesignatorDatabase), "InitDesignators"), postfix: new HarmonyMethod(typeof(ReverseDesignatorDatabase_InitDesignators), nameof(ReverseDesignatorDatabase_InitDesignators.Postfix)));
+        settings = GetSettings<SmartCaptureThemSettings>();
 
         try
         {
@@ -64,6 +67,49 @@ public static class StartUp
 
             }))();
         }
-        catch (TypeLoadException ex) { Log.Error("[WOD] Error when patching VanillaTradingExpanded" + ex); }
+        catch (TypeLoadException ex) { Log.Error("[SmarterCaptureThem] Error when patching: " + ex); }
+    }
+
+    public override void DoSettingsWindowContents(Rect inRect)
+    {
+        Listing_Standard listingStandard = new Listing_Standard();
+        listingStandard.Begin(inRect);
+        listingStandard.Label("bleedoutMinHoursSetting".Translate());
+        settings.bleedoutMinHours = listingStandard.SliderLabeled($"{settings.bleedoutMinHours:F1} h", settings.bleedoutMinHours, 0, 24, 0.2f);
+        if (DeathRattle)
+            listingStandard.CheckboxLabeled("giveUpMissingOrganSetting".Translate(), ref settings.giveUpMissingOrgan, "giveUpMissingOrganSettingDesc".Translate());
+
+        listingStandard.End();
+
+        base.DoSettingsWindowContents(inRect);
+    }
+
+    /// <summary>
+    /// Override SettingsCategory to show up in the list of settings.
+    /// Using .Translate() is optional, but does allow for localisation.
+    /// </summary>
+    /// <returns>The (translated) mod name.</returns>
+    public override string SettingsCategory()
+    {
+        return "SmarterCaptureThem".Translate();
+    }
+}
+
+public class SmartCaptureThemSettings : ModSettings
+{
+    /// <summary>
+    /// The three settings our mod has.
+    /// </summary>
+    public float bleedoutMinHours = 1f;
+    public bool giveUpMissingOrgan = true;
+
+    /// <summary>
+    /// The part that writes our settings to file. Note that saving is by ref.
+    /// </summary>
+    public override void ExposeData()
+    {
+        Scribe_Values.Look(ref bleedoutMinHours, "bleedoutMinHours", 1f);
+        Scribe_Values.Look(ref giveUpMissingOrgan, "giveUpMissingOrgan", true);
+        base.ExposeData();
     }
 }

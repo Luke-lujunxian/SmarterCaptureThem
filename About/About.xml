@@ -1,12 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-  <name>Smarter Capture Them (Continued)</name>
+  <name>Smarter Capture Them</name>
   <packageId>lke.Smarter.CaptureThem</packageId>
-  <author>busted_bunny</author>
-  <url>https://github.com/emipa606/CaptureThem</url>
+  <author>Luke_lu</author>
+  <url>https://github.com/Luke-lujunxian/SmarterCaptureThem</url>
   <supportedVersions>
-    <li>1.3</li>
-    <li>1.4</li>
     <li>1.5</li>
   </supportedVersions>
   <modDependencies>
@@ -20,52 +18,6 @@
   <loadAfter>
     <li>brrainz.harmony</li>
   </loadAfter>
-  <description>[img]https://i.imgur.com/buuPQel.png[/img]
-Update of busted_bunnys mod https://steamcommunity.com/sharedfiles/filedetails/?id=2582758172
-
-[img]https://i.imgur.com/pufA0kM.png[/img]
-
-[table]
-    [tr][td][url=https://dsc.gg/mlie][img]https://i.imgur.com/zdzzBrc.png[/img][/url][/td] [td][url=https://github.com/emipa606/CaptureThem][img]https://i.imgur.com/kTkpTOE.png[/img][/url][/td]
-    [/tr]
-    [tr]
-        [td][img]https://i.imgur.com/WjDSfUn.png[/img][/td]
-        [td][img]https://i.imgur.com/h5VwTNL.png[/img][/td]
-    [/tr]
-[/table]
-	
-[img]https://i.imgur.com/Z4GOv8H.png[/img]
-[i]Not feeling like looking for free pawns to capture enemies before they bleed out? I got you. With this tool you can simply mark all pawns you want to capture and your pawns will capture them themselves.[/i]
-
-This mod adds a new work type "Capture" between "Bed Rest" and "Basic". All pawns assigned to this work will capture foreign pawns marked with new tool in order menu. This tool also available upon selecting downed pawns that are not of your faction.
-
-You don't have to manually right click capturing anymore.
-
-[h1]Bugs and suggestions[/h1]
-
-If you encounter any errors related to this mod or notice bugs, please post about it into [url=https://steamcommunity.com/workshop/filedetails/discussion/2582758172/3042731710367488848/]bug reports section[/url]. All bug reports without any description and log will be ignored. Also feel free to post any suggestions in comments on how to make this mod better.
-
-[h1]Compatibility[/h1]
-Should be compatible with anything.
-Special patches include:
-Misc. Robots++
-
-[h1]Translations[/h1]
--English
--ChineseSimplified (简体中文)
-
-For those who wish to contribute to my BioTech DLC purchase.
-[url=https://boosty.to/bustedbunny] [img]https://steamuserimages-a.akamaihd.net/ugc/1893226588885225061/74CC48E04ABA85EFEC132A71B213DF25A6411A23/?imw=5000&amp;amp;imh=5000&amp;amp;ima=fit&amp;amp;imcolor=%23000000&amp;amp;letterbox=false[/img] [/url]
-
-[img]https://i.imgur.com/PwoNOj4.png[/img]
-[list]
-[*] See if the the error persists if you just have this mod and its requirements active.
-[*] If not, try adding your other mods until it happens again.
-[*] Post your error-log using [url=https://steamcommunity.com/workshop/filedetails/?id=818773962]HugsLib[/url] or the standalone [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2873415404]Uploader[/url] and command Ctrl+F12
-[*] For best support, please use the Discord-channel for error-reporting.
-[*] Do not report errors by making a discussion-thread, I get no notification of that.
-[*] If you have the solution for a problem, please post it to the GitHub repository.
-[*] Use [url=https://github.com/RimSort/RimSort/releases/latest]RimSort[/url] to sort your mods
-[/list]</description>
+  <description></description>
   <modVersion IgnoreIfNoMatchingField="True">1.5.0</modVersion>
 </ModMetaData>

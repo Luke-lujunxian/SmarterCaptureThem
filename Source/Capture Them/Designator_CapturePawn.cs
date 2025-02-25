@@ -91,8 +91,7 @@ public class Designator_CapturePawn : Designator
             return false;
 
         }
-        float minHours = 1;
-        bool willBleadingOut =  HealthUtility.TicksUntilDeathDueToBloodLoss(pawn) / 2500 < minHours;
+        bool willBleadingOut =  HealthUtility.TicksUntilDeathDueToBloodLoss(pawn) / 2500 < StartUp.settings.bleedoutMinHours;
 
 
         if (willBleadingOut)
@@ -110,7 +109,7 @@ public class Designator_CapturePawn : Designator
 
         }
 
-        if (StartUp.DeathRattle)
+        if (StartUp.DeathRattle && StartUp.settings.giveUpMissingOrgan)
         {
             foreach(var hediff in pawn.health.hediffSet.hediffs)
             {
@@ -132,7 +131,7 @@ public class Designator_CapturePawn_FirstAid : Designator_CapturePawn
     {
         defaultLabel = "DesignatorCapturePawn_FirstAid".Translate();
         defaultDesc = "DesignatorCapturePawnDesc_FirstAid".Translate();
-        icon = ContentFinder<Texture2D>.Get("CapturePawnGizmo");
+        icon = ContentFinder<Texture2D>.Get("CapturePawnGizmo_FA");
         useMouseIcon = true;
         soundSucceeded = SoundDefOf.Designate_Haul;
         hotKey = KeyBindingDefOf.Misc1;
@@ -148,7 +147,7 @@ public class Designator_CapturePawn_CE : Designator_CapturePawn
     {
         defaultLabel = "DesignatorCapturePawn_CE".Translate();
         defaultDesc = "DesignatorCapturePawnDesc_CE".Translate();
-        icon = ContentFinder<Texture2D>.Get("CapturePawnGizmo");
+        icon = ContentFinder<Texture2D>.Get("CapturePawnGizmo_CE");
         useMouseIcon = true;
         soundSucceeded = SoundDefOf.Designate_Haul;
         hotKey = KeyBindingDefOf.Misc1;

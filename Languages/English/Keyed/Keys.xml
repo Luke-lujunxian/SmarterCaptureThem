@@ -4,8 +4,11 @@
   <DesignatorCapturePawnDesc>Capture chosen pawn to make him a prisoner. Your colonists assigned to this work will automatically bring pawn to prisoners bed. Works same as right clicking to capture.</DesignatorCapturePawnDesc>
   <MessageMustDesignateDownedForeignPawn>Pawns must be downed and not be of your faction.</MessageMustDesignateDownedForeignPawn>
     <DesignatorCapturePawn_CE>Do CE Stabilize and Capture downed pawn</DesignatorCapturePawn_CE>
-  <DesignatorCapturePawnDesc_CE>Capture chosen pawn to make him a prisoner. Your colonists assigned to this work will try Stabilize them and automatically bring pawn to prisoners bed. Works same as right clicking to capture.</DesignatorCapturePawnDesc_CE>
+  <DesignatorCapturePawnDesc_CE>Capture chosen pawn to make him a prisoner. Your colonists assigned to this work will try Stabilize(CE) them and automatically bring pawn to prisoners bed. Works same as right clicking to capture.</DesignatorCapturePawnDesc_CE>
     <DesignatorCapturePawn_FirstAid>Do FirstAid and Capture downed pawn</DesignatorCapturePawn_FirstAid>
-  <DesignatorCapturePawnDesc_FirstAid>Capture chosen pawn to make him a prisoner. Your colonists assigned to this work will try do FirstAid and automatically bring pawn to prisoners bed. Works same as right clicking to capture.</DesignatorCapturePawnDesc_FirstAid>
-  
+  <DesignatorCapturePawnDesc_FirstAid>Capture chosen pawn to make him a prisoner. Your colonists assigned to this work will try do FirstAid([RH2]BCD:First Aid) and automatically bring pawn to prisoners bed. Works same as right clicking to capture.</DesignatorCapturePawnDesc_FirstAid>
+  <SmarterCaptureThem>Smarter Capture Them</SmarterCaptureThem>
+  <bleedoutMinHoursSetting>Rescue Pawn with hours to bleed out more than:</bleedoutMinHoursSetting>
+  <giveUpMissingOrganSetting>Give up pawn missing vital organ</giveUpMissingOrganSetting>
+  <giveUpMissingOrganSettingDesc>Death Rattle allow Pawn to remain alive (for a while) with vital organ missing. Do not capture these pawn.</giveUpMissingOrganSettingDesc>
 </LanguageData>
