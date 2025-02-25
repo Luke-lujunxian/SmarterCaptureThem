@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using RimWorld;
 using Verse;
 using Verse.AI;
 
-namespace CaptureThem;
+namespace SmartCaptureThem;
 
 public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
 {
@@ -57,6 +58,56 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
     {
         var pawn2 = t as Pawn;
         var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
+
+        if (StartUp.FirstAid)
+        {
+            if (StartUp.CP_FirstAid == null)
+            {
+                StartUp.CP_FirstAid = DefDatabase<JobDef>.GetNamed("CP_FirstAid");
+            }
+
+            if (pawn2.health.hediffSet.BleedRateTotal > 0)
+            {
+#if DEBUG
+                Log.Message("Doing FirstAid on "+ pawn.Name+" first");
+#endif
+                return JobMaker.MakeJob(StartUp.CP_FirstAid, pawn2);
+            }
+        }
+
+        if (StartUp.CE)
+        {
+            if (StartUp.CEStablize == null)
+            {
+                StartUp.CEStablize = DefDatabase<JobDef>.GetNamed("Stabilize");
+            }
+
+            if (pawn2.health.hediffSet.BleedRateTotal > 0)
+            {
+#if DEBUG
+                Log.Message("Doing CE Stabilize on " + pawn.Name + " first");
+#endif
+                // Take from CE https://github.com/CombatExtended-Continued/CombatExtended/blob/ba83aaf2d94c95c3ce1f10af0500e3aed21e19bc/Source/CombatExtended/Harmony/Harmony_FloatMenuMakerMap.cs#L165
+                if (pawn.inventory == null || pawn.inventory.innerContainer == null || !pawn.inventory.innerContainer.Any(t => t.def.IsMedicine))
+                {
+
+                }
+                else
+                {
+                    // Drop medicine from inventory
+                    Medicine medicine = (Medicine)pawn.inventory.innerContainer.OrderByDescending(t => t.GetStatValue(StatDefOf.MedicalPotency)).FirstOrDefault();
+                    Thing medThing;
+                    if (medicine != null && pawn.inventory.innerContainer.TryDrop(medicine, pawn.Position, pawn.Map, ThingPlaceMode.Direct, 1, out medThing))
+                    {
+                        Job job2 = JobMaker.MakeJob(StartUp.CEStablize, pawn2, medThing);
+                        job2.count = 1;
+                        return job2;
+                    }
+                }
+
+            }
+        }
+
         var job = JobMaker.MakeJob(Job, pawn2, t2);
         job.count = 1;
         PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.Capturing, KnowledgeAmount.Total);

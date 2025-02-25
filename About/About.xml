@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-  <name>Capture Them (Continued)</name>
-  <packageId>Mlie.CaptureThem</packageId>
+  <name>Smarter Capture Them (Continued)</name>
+  <packageId>lke.Smarter.CaptureThem</packageId>
   <author>busted_bunny</author>
   <url>https://github.com/emipa606/CaptureThem</url>
   <supportedVersions>

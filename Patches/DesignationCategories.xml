@@ -3,7 +3,31 @@
   <Operation Class="PatchOperationAdd">
     <xpath>*/DesignationCategoryDef[defName = "Orders"]/specialDesignatorClasses</xpath>
     <value>
-      <li>CaptureThem.Designator_CapturePawn</li>
+      <li>SmartCaptureThem.Designator_CapturePawn</li>
     </value>
+  </Operation>
+
+  <Operation Class="PatchOperationFindMod">
+    <mods>
+      <li>Combat Extended</li>
+    </mods>
+    <match Class="PatchOperationAdd">
+      <xpath>*/DesignationCategoryDef[defName = "Orders"]/specialDesignatorClasses</xpath>
+      <value>
+        <li>SmartCaptureThem.Designator_CapturePawn_CE</li>
+      </value>
+    </match>
+  </Operation>
+
+  <Operation Class="PatchOperationFindMod">
+    <mods>
+      <li>[RH2] BCD: First Aid</li>
+    </mods>
+    <match Class="PatchOperationAdd">
+      <xpath>*/DesignationCategoryDef[defName = "Orders"]/specialDesignatorClasses</xpath>
+      <value>
+        <li>SmartCaptureThem.Designator_CapturePawn_FirstAid</li>
+      </value>
+    </match>
   </Operation>
 </Patch>

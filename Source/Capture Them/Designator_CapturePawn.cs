@@ -2,7 +2,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 
-namespace CaptureThem;
+namespace SmartCaptureThem;
 
 public class Designator_CapturePawn : Designator
 {
@@ -50,7 +50,8 @@ public class Designator_CapturePawn : Designator
         }
 
         return t is Pawn { Downed: true } pawn && pawn.Faction != Faction.OfPlayer && !pawn.InBed() &&
-               !pawn.IsPrisonerOfColony && pawn.RaceProps.Humanlike;
+               !pawn.IsPrisonerOfColony && pawn.RaceProps.Humanlike &&
+               !IsBeyoundSaving(pawn); //Check if bleed out in less than 1 hours
     }
 
     public override void DesignateSingleCell(IntVec3 c)
@@ -78,4 +79,81 @@ public class Designator_CapturePawn : Designator
         Map.designationManager.RemoveAllDesignationsOn(t);
         Map.designationManager.AddDesignation(new Designation(t, Designation));
     }
+
+    public bool IsBeyoundSaving(Pawn pawn)
+    {
+        bool canRevive = pawn.health.hediffSet.HasPreventsDeath;
+        if (canRevive)
+        {
+#if DEBUG
+            Log.Message(pawn.Name + "will revive, capture it regardless of hediff");
+#endif
+            return false;
+
+        }
+        float minHours = 1;
+        bool willBleadingOut =  HealthUtility.TicksUntilDeathDueToBloodLoss(pawn) / 2500 < minHours;
+
+
+        if (willBleadingOut)
+        {
+#if DEBUG
+            Log.Message(pawn.Name + "will BleedOut in " + HealthUtility.TicksUntilDeathDueToBloodLoss(pawn) / 2500 + " hour(s), dont capture it because it is under the set threadhold " + minHours + ". Bleed rate: " + pawn.health.hediffSet.BleedRateTotal);
+#endif
+            return willBleadingOut;
+        }
+        else
+        {
+#if DEBUG
+            Log.Message(pawn.Name + "will BleedOut in " + HealthUtility.TicksUntilDeathDueToBloodLoss(pawn) / 2500 + " hour(s), capture it. Bleed rate: " + pawn.health.hediffSet.BleedRateTotal);
+#endif
+
+        }
+
+        if (StartUp.DeathRattle)
+        {
+            foreach(var hediff in pawn.health.hediffSet.hediffs)
+            {
+                if (StartUp.deathrattleHediffs.Contains(hediff.def.defName))
+                {
+                    return true;
+                }
+            };
+        }
+
+        return false;
+
+    }
+}
+
+public class Designator_CapturePawn_FirstAid : Designator_CapturePawn
+{
+    public Designator_CapturePawn_FirstAid()
+    {
+        defaultLabel = "DesignatorCapturePawn_FirstAid".Translate();
+        defaultDesc = "DesignatorCapturePawnDesc".Translate();
+        icon = ContentFinder<Texture2D>.Get("CapturePawnGizmo");
+        useMouseIcon = true;
+        soundSucceeded = SoundDefOf.Designate_Haul;
+        hotKey = KeyBindingDefOf.Misc1;
+    }
+
+    //protected override DesignationDef Designation => CaptureThemDefOf.CaptureThemCapture_FirstAid;
+
+}
+
+public class Designator_CapturePawn_CE : Designator_CapturePawn
+{
+    public Designator_CapturePawn_CE()
+    {
+        defaultLabel = "DesignatorCapturePawn_CE".Translate();
+        defaultDesc = "DesignatorCapturePawnDesc".Translate();
+        icon = ContentFinder<Texture2D>.Get("CapturePawnGizmo");
+        useMouseIcon = true;
+        soundSucceeded = SoundDefOf.Designate_Haul;
+        hotKey = KeyBindingDefOf.Misc1;
+    }
+
+    //protected override DesignationDef Designation => CaptureThemDefOf.CaptureThemCapture_CE;
+
 }

@@ -14,7 +14,7 @@
   <WorkGiverDef>
     <defName>CaptureThemCapture</defName>
     <label>Capture pawns</label>
-    <giverClass>CaptureThem.WorkGiver_CapturePrisoners</giverClass>
+    <giverClass>SmartCaptureThem.WorkGiver_CapturePrisoners</giverClass>
     <workType>CaptureThemCapture</workType>
     <priorityInType>70</priorityInType>
     <verb>capture</verb>

@@ -1,4 +1,4 @@
-using CaptureThem;
+using SmartCaptureThem;
 using HarmonyLib;
 using Verse;
 
