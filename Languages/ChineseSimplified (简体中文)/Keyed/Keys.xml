@@ -3,7 +3,13 @@
   <!-- EN: Capture downed pawn -->
   <DesignatorCapturePawn>抓捕落单的小人</DesignatorCapturePawn>
   <!-- EN: Capture chosen pawn to make him a prisoner. Your colonists assigned to this work will automatically bring pawn to prisoners bed. Works same as right clicking to capture. -->
-  <DesignatorCapturePawnDesc>抓住选定的卒子，使他成为俘虏。你的殖民者被分配到这项工作将会自动把卒子带到囚犯床上。工作原理与右击捕获相同。</DesignatorCapturePawnDesc>
+  <DesignatorCapturePawnDesc>抓住选定的小人，使他成为俘虏。你的殖民者被分配到这项工作将会自动把小人带到囚犯床上。工作原理与右击捕获相同。</DesignatorCapturePawnDesc>
   <!-- EN: Pawns must be downed and not be of your faction. -->
-  <MessageMustDesignateDownedForeignPawn>卒子必须被打倒，而且不是你的阵营。</MessageMustDesignateDownedForeignPawn>
+  <MessageMustDesignateDownedForeignPawn>小人必须倒地，而且不是你的阵营。</MessageMustDesignateDownedForeignPawn>
+
+      <DesignatorCapturePawn_CE>CE止血并抓捕</DesignatorCapturePawn_CE>
+  <DesignatorCapturePawnDesc_CE>尝试CE止血并抓住选定的小人，使他成为俘虏。你的殖民者被分配到这项工作将会自动把小人带到囚犯床上。工作原理与右击捕获相同。</DesignatorCapturePawnDesc_CE>
+    <DesignatorCapturePawn_FirstAid>FirstAid急救并抓捕</DesignatorCapturePawn_FirstAid>
+  <DesignatorCapturePawnDesc_FirstAid>尝试FirstAid急救并抓住选定的小人，使他成为俘虏。你的殖民者被分配到这项工作将会自动把小人带到囚犯床上。工作原理与右击捕获相同。</DesignatorCapturePawnDesc_FirstAid>
+  
 </LanguageData>

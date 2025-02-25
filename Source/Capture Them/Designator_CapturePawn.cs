@@ -51,7 +51,7 @@ public class Designator_CapturePawn : Designator
 
         return t is Pawn { Downed: true } pawn && pawn.Faction != Faction.OfPlayer && !pawn.InBed() &&
                !pawn.IsPrisonerOfColony && pawn.RaceProps.Humanlike &&
-               !IsBeyoundSaving(pawn); //Check if bleed out in less than 1 hours
+               !IsBeyoundSaving(pawn); //Check if bleed out in less than certain time or is dieing from certain hediff
     }
 
     public override void DesignateSingleCell(IntVec3 c)
@@ -131,14 +131,14 @@ public class Designator_CapturePawn_FirstAid : Designator_CapturePawn
     public Designator_CapturePawn_FirstAid()
     {
         defaultLabel = "DesignatorCapturePawn_FirstAid".Translate();
-        defaultDesc = "DesignatorCapturePawnDesc".Translate();
+        defaultDesc = "DesignatorCapturePawnDesc_FirstAid".Translate();
         icon = ContentFinder<Texture2D>.Get("CapturePawnGizmo");
         useMouseIcon = true;
         soundSucceeded = SoundDefOf.Designate_Haul;
         hotKey = KeyBindingDefOf.Misc1;
     }
 
-    //protected override DesignationDef Designation => CaptureThemDefOf.CaptureThemCapture_FirstAid;
+    protected override DesignationDef Designation => CaptureThemDefOf.CaptureThemCapture_FirstAid;
 
 }
 
@@ -147,13 +147,13 @@ public class Designator_CapturePawn_CE : Designator_CapturePawn
     public Designator_CapturePawn_CE()
     {
         defaultLabel = "DesignatorCapturePawn_CE".Translate();
-        defaultDesc = "DesignatorCapturePawnDesc".Translate();
+        defaultDesc = "DesignatorCapturePawnDesc_CE".Translate();
         icon = ContentFinder<Texture2D>.Get("CapturePawnGizmo");
         useMouseIcon = true;
         soundSucceeded = SoundDefOf.Designate_Haul;
         hotKey = KeyBindingDefOf.Misc1;
     }
 
-    //protected override DesignationDef Designation => CaptureThemDefOf.CaptureThemCapture_CE;
+    protected override DesignationDef Designation => CaptureThemDefOf.CaptureThemCapture_CE;
 
 }

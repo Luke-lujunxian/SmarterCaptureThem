@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
+<!-- Original Work-->
   <WorkTypeDef>
     <defName>CaptureThemCapture</defName>
     <labelShort>Capture</labelShort>
@@ -11,10 +12,39 @@
     <alwaysStartActive>true</alwaysStartActive>
     <requireCapableColonist>true</requireCapableColonist>
   </WorkTypeDef>
+
   <WorkGiverDef>
     <defName>CaptureThemCapture</defName>
     <label>Capture pawns</label>
     <giverClass>SmartCaptureThem.WorkGiver_CapturePrisoners</giverClass>
+    <workType>CaptureThemCapture</workType>
+    <priorityInType>70</priorityInType>
+    <verb>capture</verb>
+    <gerund>capturing</gerund>
+    <emergency>true</emergency>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+  </WorkGiverDef>
+
+  <WorkGiverDef>
+    <defName>CaptureThemCapture_FirstAid</defName>
+    <label>Do FirstAid and Capture pawns</label>
+    <giverClass>SmartCaptureThem.WorkGiver_CapturePrisoners_FirstAid</giverClass>
+    <workType>CaptureThemCapture</workType>
+    <priorityInType>70</priorityInType>
+    <verb>capture</verb>
+    <gerund>capturing</gerund>
+    <emergency>true</emergency>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+  </WorkGiverDef>
+
+  <WorkGiverDef>
+    <defName>CaptureThemCapture_CE</defName>
+    <label>Do CE stablizing and Capture pawns</label>
+    <giverClass>SmartCaptureThem.WorkGiver_CapturePrisoners_CE</giverClass>
     <workType>CaptureThemCapture</workType>
     <priorityInType>70</priorityInType>
     <verb>capture</verb>

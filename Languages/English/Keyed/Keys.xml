@@ -3,4 +3,9 @@
   <DesignatorCapturePawn>Capture downed pawn</DesignatorCapturePawn>
   <DesignatorCapturePawnDesc>Capture chosen pawn to make him a prisoner. Your colonists assigned to this work will automatically bring pawn to prisoners bed. Works same as right clicking to capture.</DesignatorCapturePawnDesc>
   <MessageMustDesignateDownedForeignPawn>Pawns must be downed and not be of your faction.</MessageMustDesignateDownedForeignPawn>
+    <DesignatorCapturePawn_CE>Do CE Stabilize and Capture downed pawn</DesignatorCapturePawn_CE>
+  <DesignatorCapturePawnDesc_CE>Capture chosen pawn to make him a prisoner. Your colonists assigned to this work will try Stabilize them and automatically bring pawn to prisoners bed. Works same as right clicking to capture.</DesignatorCapturePawnDesc_CE>
+    <DesignatorCapturePawn_FirstAid>Do FirstAid and Capture downed pawn</DesignatorCapturePawn_FirstAid>
+  <DesignatorCapturePawnDesc_FirstAid>Capture chosen pawn to make him a prisoner. Your colonists assigned to this work will try do FirstAid and automatically bring pawn to prisoners bed. Works same as right clicking to capture.</DesignatorCapturePawnDesc_FirstAid>
+  
 </LanguageData>
