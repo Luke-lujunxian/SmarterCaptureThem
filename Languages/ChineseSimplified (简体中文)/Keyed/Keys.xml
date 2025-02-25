@@ -16,4 +16,6 @@
     <giveUpMissingOrganSetting>放弃缺少关键器官的小人</giveUpMissingOrganSetting>
   <giveUpMissingOrganSettingDesc>Death Rattle 允许小人在失去关键器官后存活一段时间，不抓捕这些小人。</giveUpMissingOrganSettingDesc>
   <maxBleedoutFirstAid>最大先进行急救的流血致死小时数</maxBleedoutFirstAid>
+    <checkForDangerSetting>俘虏前检查附近安全</checkForDangerSetting>
+  <checkForDangerSettingDesc>默认情况下，殖民者不会在目标附加有危险时前往俘虏。这可能导致抢救不及时。关闭可能导致殖民者误入危险区域，请自行权衡</checkForDangerSettingDesc>
 </LanguageData>

@@ -66,7 +66,7 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
 
     protected static bool DangerIsNear(Pawn pawn, Pawn p, float radius)
     {
-        if (!p.Spawned)
+        if (!p.Spawned || !StartUp.settings.checkForDanger)
         {
             return false;
         }

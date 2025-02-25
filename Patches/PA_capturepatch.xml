@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+<Operation Class="PatchOperationSequence">
+    <operations>
+      <!-- MiliraRace -->
+      <li Class="PatchOperationAdd" MayRequire="Ancot.MiliraRace">
+        <xpath>Defs/ThingDef[@Name="Milira_BaseMilianWalkerA"]/race/mechEnabledWorkTypes</xpath>
+          <value>
+            <li>CaptureThemCapture</li>
+          </value>
+       </li>
+        <li Class="PatchOperationAdd" MayRequire="Ancot.MiliraRace">
+        <xpath>Defs/ThingDef[@Name="Milira_BaseMilianWalkerB"]/race/mechEnabledWorkTypes</xpath>
+          <value>
+            <li>CaptureThemCapture</li>
+          </value>
+       </li>
+    </operations>
+</Operation>
+</Patch>

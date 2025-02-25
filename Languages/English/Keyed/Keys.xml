@@ -12,4 +12,6 @@
   <giveUpMissingOrganSetting>Give up pawn missing vital organ</giveUpMissingOrganSetting>
   <giveUpMissingOrganSettingDesc>Death Rattle allow Pawn to remain alive (for a while) with vital organ missing. Do not capture these pawn.</giveUpMissingOrganSettingDesc>
   <maxBleedoutFirstAid>Max bleedout hour to perform first aid</maxBleedoutFirstAid>
+  <checkForDangerSetting>Check for danger when capturing</checkForDangerSetting>
+  <checkForDangerSettingDesc>By dafault, pawn will not perform rescue if there is danger around target. This may cause delay in rescue. Disable at your own risk</checkForDangerSettingDesc>
 </LanguageData>

@@ -82,6 +82,7 @@ public class StartUp : Mod
         settings.bleedoutMinHours = listingStandard.SliderLabeled($"{settings.bleedoutMinHours:F1} h", settings.bleedoutMinHours, 0, 24, 0.2f);
         listingStandard.Label("maxBleedoutFirstAid".Translate());
         settings.maxBleedoutFirstAid = listingStandard.SliderLabeled($"{settings.maxBleedoutFirstAid:F1} h", settings.maxBleedoutFirstAid, 1, 24, 0.2f);
+        listingStandard.CheckboxLabeled("checkForDangerSetting".Translate(), ref settings.checkForDanger, "checkForDangerSettingDesc".Translate());
         if (DeathRattle)
             listingStandard.CheckboxLabeled("giveUpMissingOrganSetting".Translate(), ref settings.giveUpMissingOrgan, "giveUpMissingOrganSettingDesc".Translate());
 
@@ -109,6 +110,7 @@ public class SmartCaptureThemSettings : ModSettings
     public float bleedoutMinHours = 1f;
     public float maxBleedoutFirstAid = 6f;
     public bool giveUpMissingOrgan = true;
+    public bool checkForDanger = true;
 
     /// <summary>
     /// The part that writes our settings to file. Note that saving is by ref.
@@ -118,6 +120,7 @@ public class SmartCaptureThemSettings : ModSettings
         Scribe_Values.Look(ref bleedoutMinHours, "bleedoutMinHours", 1f);
         Scribe_Values.Look(ref maxBleedoutFirstAid, "maxBleedoutFirstAid", 6f);
         Scribe_Values.Look(ref giveUpMissingOrgan, "giveUpMissingOrgan", true);
+        Scribe_Values.Look(ref checkForDanger, "checkForDanger", true);
         base.ExposeData();
     }
 }
