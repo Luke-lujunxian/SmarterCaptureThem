@@ -12,6 +12,8 @@ public class Pawn_HealthTracker_MakeUndowned
         if (___pawn is { Map: not null })
         {
             ___pawn.Map.designationManager.TryRemoveDesignationOn(___pawn, CaptureThemDefOf.CaptureThemCapture);
+            ___pawn.Map.designationManager.TryRemoveDesignationOn(___pawn, CaptureThemDefOf.CaptureThemCapture_CE);
+            ___pawn.Map.designationManager.TryRemoveDesignationOn(___pawn, CaptureThemDefOf.CaptureThemCapture_FirstAid);
         }
     }
 }

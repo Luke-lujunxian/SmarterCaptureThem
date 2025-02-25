@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Capture_Them.HarmonyPatches;
 using HarmonyLib;
+using RimWorld;
 using SmartCaptureThem.HarmonyPatches;
 using UnityEngine;
 using Verse;
@@ -25,6 +26,9 @@ public class StartUp : Mod
     {
         var harmony = new Harmony("SmartCaptureThem.patch");
         harmony.Patch(AccessTools.Method(typeof(ReverseDesignatorDatabase), "InitDesignators"), postfix: new HarmonyMethod(typeof(ReverseDesignatorDatabase_InitDesignators), nameof(ReverseDesignatorDatabase_InitDesignators.Postfix)));
+        harmony.Patch(AccessTools.Method(typeof(Pawn_HealthTracker), "MakeUndowned"), postfix: new HarmonyMethod(typeof(Pawn_HealthTracker_MakeUndowned), nameof(Pawn_HealthTracker_MakeUndowned.Prefix)));
+        harmony.Patch(AccessTools.Method(typeof(Pawn_GuestTracker), nameof(Pawn_GuestTracker.SetGuestStatus)), postfix: new HarmonyMethod(typeof(Pawn_GuestTracker_SetGuestStatus), nameof(Pawn_GuestTracker_SetGuestStatus.Postfix)));
+
         settings = GetSettings<SmartCaptureThemSettings>();
 
         try

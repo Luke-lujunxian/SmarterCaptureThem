@@ -18,9 +18,13 @@ public class Pawn_GuestTracker_SetGuestStatus
         if (___pawn.Map != null)
         {
             ___pawn.Map.designationManager.TryRemoveDesignationOn(___pawn, CaptureThemDefOf.CaptureThemCapture);
+            ___pawn.Map.designationManager.TryRemoveDesignationOn(___pawn, CaptureThemDefOf.CaptureThemCapture_CE);
+            ___pawn.Map.designationManager.TryRemoveDesignationOn(___pawn, CaptureThemDefOf.CaptureThemCapture_FirstAid);
             return;
         }
 
         ___pawn.MapHeld?.designationManager.TryRemoveDesignationOn(___pawn, CaptureThemDefOf.CaptureThemCapture);
+        ___pawn.MapHeld?.designationManager.TryRemoveDesignationOn(___pawn, CaptureThemDefOf.CaptureThemCapture_CE);
+        ___pawn.MapHeld?.designationManager.TryRemoveDesignationOn(___pawn, CaptureThemDefOf.CaptureThemCapture_FirstAid);
     }
 }
