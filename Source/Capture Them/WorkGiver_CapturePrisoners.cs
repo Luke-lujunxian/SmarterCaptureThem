@@ -148,7 +148,7 @@ public class WorkGiver_CapturePrisoners_FirstAid: WorkGiver_CapturePrisoners
                 StartUp.CP_FirstAid = DefDatabase<JobDef>.GetNamed("CP_FirstAid");
             }
 
-            if (pawn2.health.hediffSet.BleedRateTotal > 0)
+            if (pawn2.health.hediffSet.BleedRateTotal > 0 && HealthUtility.TicksUntilDeathDueToBloodLoss(pawn2) / 2500f < StartUp.settings.maxBleedoutFirstAid)
             {
 #if DEBUG
                 Log.Message("Doing FirstAid on " + pawn2.Name + " first");
@@ -220,7 +220,7 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
                 StartUp.CEStablize = DefDatabase<JobDef>.GetNamed("Stabilize");
             }
 
-            if (pawn2.health.hediffSet.BleedRateTotal > 0)
+            if (pawn2.health.hediffSet.BleedRateTotal>0 && HealthUtility.TicksUntilDeathDueToBloodLoss(pawn2) / 2500f < StartUp.settings.maxBleedoutFirstAid)
             {
 #if DEBUG
                 Log.Message("Doing CE Stabilize on " + pawn.Name + " first");

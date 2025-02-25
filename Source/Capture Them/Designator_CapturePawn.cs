@@ -91,7 +91,7 @@ public class Designator_CapturePawn : Designator
             return false;
 
         }
-        bool willBleadingOut =  HealthUtility.TicksUntilDeathDueToBloodLoss(pawn) / 2500 < StartUp.settings.bleedoutMinHours;
+        bool willBleadingOut =  HealthUtility.TicksUntilDeathDueToBloodLoss(pawn) / 2500f < StartUp.settings.bleedoutMinHours;
 
 
         if (willBleadingOut)

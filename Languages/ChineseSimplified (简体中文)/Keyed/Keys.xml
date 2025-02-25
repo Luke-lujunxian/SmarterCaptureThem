@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LanguageData>
   <!-- EN: Capture downed pawn -->
-  <DesignatorCapturePawn>抓捕</DesignatorCapturePawn>
+  <DesignatorCapturePawn>俘虏</DesignatorCapturePawn>
   <!-- EN: Capture chosen pawn to make him a prisoner. Your colonists assigned to this work will automatically bring pawn to prisoners bed. Works same as right clicking to capture. -->
   <DesignatorCapturePawnDesc>抓住选定的小人，使他成为俘虏。你的殖民者被分配到这项工作将会自动把小人带到囚犯床上。工作原理与右击捕获相同。</DesignatorCapturePawnDesc>
   <!-- EN: Pawns must be downed and not be of your faction. -->
   <MessageMustDesignateDownedForeignPawn>小人必须倒地，而且不是你的阵营。</MessageMustDesignateDownedForeignPawn>
 
-      <DesignatorCapturePawn_CE>止血并抓捕</DesignatorCapturePawn_CE>
-  <DesignatorCapturePawnDesc_CE>尝试止血(CE)并抓住选定的小人，使他成为俘虏。你的殖民者被分配到这项工作将会自动把小人带到囚犯床上。工作原理与右击捕获相同。</DesignatorCapturePawnDesc_CE>
-    <DesignatorCapturePawn_FirstAid>急救并抓捕</DesignatorCapturePawn_FirstAid>
-  <DesignatorCapturePawnDesc_FirstAid>尝试急救([RH2]BCD:First Aid)并抓住选定的小人，使他成为俘虏。你的殖民者被分配到这项工作将会自动把小人带到囚犯床上。工作原理与右击捕获相同。</DesignatorCapturePawnDesc_FirstAid>
+      <DesignatorCapturePawn_CE>止血并俘虏</DesignatorCapturePawn_CE>
+  <DesignatorCapturePawnDesc_CE>尝试止血(CE)并俘虏选定的小人。你的殖民者被分配到这项工作将会自动把小人带到囚犯床上。工作原理与右击捕获相同。</DesignatorCapturePawnDesc_CE>
+    <DesignatorCapturePawn_FirstAid>急救并俘虏</DesignatorCapturePawn_FirstAid>
+  <DesignatorCapturePawnDesc_FirstAid>尝试急救([RH2]BCD:First Aid)并俘虏选定的小人。你的殖民者被分配到这项工作将会自动把小人带到囚犯床上。工作原理与右击捕获相同。</DesignatorCapturePawnDesc_FirstAid>
     <SmarterCaptureThem>更智能的抓捕</SmarterCaptureThem>
   <bleedoutMinHoursSetting>可抓捕最少剩余流血致死小时数</bleedoutMinHoursSetting>
     <giveUpMissingOrganSetting>放弃缺少关键器官的小人</giveUpMissingOrganSetting>
   <giveUpMissingOrganSettingDesc>Death Rattle 允许小人在失去关键器官后存活一段时间，不抓捕这些小人。</giveUpMissingOrganSettingDesc>
+  <maxBleedoutFirstAid>最大先进行急救的流血致死小时数</maxBleedoutFirstAid>
 </LanguageData>

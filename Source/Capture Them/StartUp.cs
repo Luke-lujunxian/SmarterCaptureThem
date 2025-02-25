@@ -76,6 +76,8 @@ public class StartUp : Mod
         listingStandard.Begin(inRect);
         listingStandard.Label("bleedoutMinHoursSetting".Translate());
         settings.bleedoutMinHours = listingStandard.SliderLabeled($"{settings.bleedoutMinHours:F1} h", settings.bleedoutMinHours, 0, 24, 0.2f);
+        listingStandard.Label("maxBleedoutFirstAid".Translate());
+        settings.maxBleedoutFirstAid = listingStandard.SliderLabeled($"{settings.maxBleedoutFirstAid:F1} h", settings.maxBleedoutFirstAid, 1, 24, 0.2f);
         if (DeathRattle)
             listingStandard.CheckboxLabeled("giveUpMissingOrganSetting".Translate(), ref settings.giveUpMissingOrgan, "giveUpMissingOrganSettingDesc".Translate());
 
@@ -101,6 +103,7 @@ public class SmartCaptureThemSettings : ModSettings
     /// The three settings our mod has.
     /// </summary>
     public float bleedoutMinHours = 1f;
+    public float maxBleedoutFirstAid = 6f;
     public bool giveUpMissingOrgan = true;
 
     /// <summary>
@@ -109,6 +112,7 @@ public class SmartCaptureThemSettings : ModSettings
     public override void ExposeData()
     {
         Scribe_Values.Look(ref bleedoutMinHours, "bleedoutMinHours", 1f);
+        Scribe_Values.Look(ref maxBleedoutFirstAid, "maxBleedoutFirstAid", 6f);
         Scribe_Values.Look(ref giveUpMissingOrgan, "giveUpMissingOrgan", true);
         base.ExposeData();
     }
