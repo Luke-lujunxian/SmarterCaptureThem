@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LanguageData>
   <!-- EN: Capture foreign pawns. -->
-  <CaptureThemCapture.description>抓捕外来的小人</CaptureThemCapture.description>
+  <CaptureThemCapture.description>抓捕倒地的敌人</CaptureThemCapture.description>
   <!-- EN: capturing -->
   <CaptureThemCapture.gerundLabel>抓捕</CaptureThemCapture.gerundLabel>
   <!-- EN: Capture -->
   <CaptureThemCapture.labelShort>抓捕</CaptureThemCapture.labelShort>
   <!-- EN: Capturer -->
-  <CaptureThemCapture.pawnLabel>捕快</CaptureThemCapture.pawnLabel>
+  <CaptureThemCapture.pawnLabel>抓捕者</CaptureThemCapture.pawnLabel>
   <!-- EN: Capture -->
   <CaptureThemCapture.verb>抓捕</CaptureThemCapture.verb>
 </LanguageData>

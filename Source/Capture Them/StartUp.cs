@@ -83,6 +83,7 @@ public class StartUp : Mod
         listingStandard.Label("maxBleedoutFirstAid".Translate());
         settings.maxBleedoutFirstAid = listingStandard.SliderLabeled($"{settings.maxBleedoutFirstAid:F1} h", settings.maxBleedoutFirstAid, 1, 24, 0.2f);
         listingStandard.CheckboxLabeled("checkForDangerSetting".Translate(), ref settings.checkForDanger, "checkForDangerSettingDesc".Translate());
+        listingStandard.CheckboxLabeled("doVanillaTendSetting".Translate(), ref settings.doVanillaTend, "doVanillaTendSettingDesc".Translate());
         if (DeathRattle)
             listingStandard.CheckboxLabeled("giveUpMissingOrganSetting".Translate(), ref settings.giveUpMissingOrgan, "giveUpMissingOrganSettingDesc".Translate());
 
@@ -111,6 +112,7 @@ public class SmartCaptureThemSettings : ModSettings
     public float maxBleedoutFirstAid = 6f;
     public bool giveUpMissingOrgan = true;
     public bool checkForDanger = true;
+    public bool doVanillaTend = false;
 
     /// <summary>
     /// The part that writes our settings to file. Note that saving is by ref.
@@ -121,6 +123,8 @@ public class SmartCaptureThemSettings : ModSettings
         Scribe_Values.Look(ref maxBleedoutFirstAid, "maxBleedoutFirstAid", 6f);
         Scribe_Values.Look(ref giveUpMissingOrgan, "giveUpMissingOrgan", true);
         Scribe_Values.Look(ref checkForDanger, "checkForDanger", true);
+        Scribe_Values.Look(ref doVanillaTend, "doVanillaTent", false);
+
         base.ExposeData();
     }
 }

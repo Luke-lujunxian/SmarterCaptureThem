@@ -30,11 +30,17 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
         if (t is not Pawn { Downed: true } pawn2 || pawn2.Faction == pawn.Faction ||
             t.Map.designationManager.DesignationOn(t, Designation) == null)
         {
+#if DEBUG
+            Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture. t is not Pawn: {t is not Pawn}");
+#endif
             return false;
         }
 
         if (pawn2.InBed() || !pawn.CanReserve(pawn2, 1, -1, null, forced) || DangerIsNear(pawn, pawn2, 40f))
         {
+#if DEBUG
+            Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture. pawn2.InBed(): {pawn2.InBed()}, !pawn.CanReserve{!pawn.CanReserve(pawn2, 1, -1, null, forced)},DangerIsNear(){DangerIsNear(pawn, pawn2, 40f)}");
+#endif
             return false;
         }
 
@@ -57,6 +63,22 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
     public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
         var pawn2 = t as Pawn;
+        if (StartUp.settings.doVanillaTend && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Doctor))
+        {
+
+            if (pawn2.health.hediffSet.BleedRateTotal > 0 && HealthUtility.TicksUntilDeathDueToBloodLoss(pawn2) / 2500f < StartUp.settings.maxBleedoutFirstAid)
+            {
+#if DEBUG
+                Log.Message("Doing vanilla tend on " + pawn2.Name + " first");
+#endif
+                Thing medicine2 = HealthAIUtility.FindBestMedicine(pawn, pawn2, onlyUseInventory: true);
+                Job job2 = JobMaker.MakeJob(JobDefOf.TendPatient, pawn2, medicine2);
+                job2.count = 1;
+                job2.draftedTend = true;
+                pawn.jobs.TryTakeOrderedJob(job2, JobTag.Misc);
+                return null;
+            }
+        }
         var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
         var job = JobMaker.MakeJob(Job, pawn2, t2);
         job.count = 1;
@@ -109,11 +131,17 @@ public class WorkGiver_CapturePrisoners_FirstAid: WorkGiver_CapturePrisoners
         if (t is not Pawn { Downed: true } pawn2 || pawn2.Faction == pawn.Faction ||
             t.Map.designationManager.DesignationOn(t, Designation) == null)
         {
+#if DEBUG
+            Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture. t is not Pawn: {t is not Pawn}");
+#endif
             return false;
         }
 
         if (pawn2.InBed() || !pawn.CanReserve(pawn2, 1, -1, null, forced) || DangerIsNear(pawn, pawn2, 40f))
         {
+#if DEBUG
+            Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture. pawn2.InBed(): {pawn2.InBed()}, !pawn.CanReserve{!pawn.CanReserve(pawn2, 1, -1, null, forced)},DangerIsNear(){DangerIsNear(pawn, pawn2, 40f)}");
+#endif
             return false;
         }
 
@@ -180,11 +208,17 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
         if (t is not Pawn { Downed: true } pawn2 || pawn2.Faction == pawn.Faction ||
             t.Map.designationManager.DesignationOn(t, Designation) == null)
         {
+#if DEBUG
+            Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture. t is not Pawn: {t is not Pawn}");
+#endif
             return false;
         }
 
         if (pawn2.InBed() || !pawn.CanReserve(pawn2, 1, -1, null, forced) || DangerIsNear(pawn, pawn2, 40f))
         {
+#if DEBUG
+            Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture. pawn2.InBed(): {pawn2.InBed()}, !pawn.CanReserve{!pawn.CanReserve(pawn2, 1, -1, null, forced)},DangerIsNear(){DangerIsNear(pawn, pawn2, 40f)}");
+#endif
             return false;
         }
 

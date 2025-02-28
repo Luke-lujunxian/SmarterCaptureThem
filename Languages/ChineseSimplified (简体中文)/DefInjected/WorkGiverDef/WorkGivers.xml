@@ -6,4 +6,18 @@
   <CaptureThemCapture.gerund>抓捕</CaptureThemCapture.gerund>
   <!-- EN: capture -->
   <CaptureThemCapture.verb>抓捕</CaptureThemCapture.verb>
+
+    <!-- EN: Capture pawns -->
+  <CaptureThemCapture_FirstAid.label>急救并抓捕小人</CaptureThemCapture_FirstAid.label>
+  <!-- EN: capturing -->
+  <CaptureThemCapture_FirstAid.gerund>抓捕</CaptureThemCapture_FirstAid.gerund>
+  <!-- EN: capture -->
+  <CaptureThemCapture_FirstAid.verb>抓捕</CaptureThemCapture_FirstAid.verb>
+
+    <!-- EN: Capture pawns -->
+  <CaptureThemCapture_CE.label>CE稳定并抓捕小人</CaptureThemCapture_CE.label>
+  <!-- EN: capturing -->
+  <CaptureThemCapture_CE.gerund>抓捕</CaptureThemCapture_CE.gerund>
+  <!-- EN: capture -->
+  <CaptureThemCapture_CE.verb>抓捕</CaptureThemCapture_CE.verb>
 </LanguageData>

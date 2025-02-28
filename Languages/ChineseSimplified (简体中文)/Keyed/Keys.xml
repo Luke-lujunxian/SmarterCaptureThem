@@ -18,4 +18,6 @@
   <maxBleedoutFirstAid>最大先进行急救的流血致死小时数</maxBleedoutFirstAid>
     <checkForDangerSetting>俘虏前检查附近安全</checkForDangerSetting>
   <checkForDangerSettingDesc>默认情况下，殖民者不会在目标附加有危险时前往俘虏。这可能导致抢救不及时。关闭可能导致殖民者误入危险区域，请自行权衡</checkForDangerSettingDesc>
+    <doVanillaTendSetting>在俘虏前进行原版治疗</doVanillaTendSetting>
+  <doVanillaTendSettingDesc>殖民者会在俘虏前尝试使用原版治疗对目标进行治疗。注意：低医疗等级的小人可能会花很长时间才能完成止血</doVanillaTendSettingDesc>
 </LanguageData>

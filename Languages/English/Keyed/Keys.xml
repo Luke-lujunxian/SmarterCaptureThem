@@ -14,4 +14,6 @@
   <maxBleedoutFirstAid>Max bleedout hour to perform first aid</maxBleedoutFirstAid>
   <checkForDangerSetting>Check for danger when capturing</checkForDangerSetting>
   <checkForDangerSettingDesc>By dafault, pawn will not perform rescue if there is danger around target. This may cause delay in rescue. Disable at your own risk</checkForDangerSettingDesc>
+  <doVanillaTendSetting>Do vanilla tending before capture</doVanillaTendSetting>
+  <doVanillaTendSettingDesc>Pawn will try to tend target using vanilla tending. Note that a pawn will very low medical skill may take too long tend.</doVanillaTendSettingDesc>
 </LanguageData>
