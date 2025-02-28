@@ -28,19 +28,8 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
     public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
         if (t is not Pawn { Downed: true } pawn2 || pawn2.Faction == pawn.Faction ||
-            t.Map.designationManager.DesignationOn(t, Designation) == null)
+            t.Map.designationManager.DesignationOn(t, this.Designation) == null)
         {
-            if (StartUp.settings.debug)
-            {
-                Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture. because on of the following is true: \n" +
-                    $"t is not Pawn: {t is not Pawn}\n");
-                if (!(t is not Pawn { Downed: true }))
-                {
-                    pawn2 = (Pawn)t;
-                    Log.Message($"pawn2.Faction == pawn.Faction: {pawn2.Faction == pawn.Faction}\n" +
-                        $"t.Map.designationManager.DesignationOn(t, Designation) == null:{t.Map.designationManager.DesignationOn(t, Designation) == null}");
-                }
-            }
             return false;
         }
 
@@ -48,10 +37,17 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
         {
             if (StartUp.settings.debug)
             {
-                Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture because on of the following is true:\n" +
-                    $" pawn2.InBed(): {pawn2.InBed()},\n " +
-                    $"!pawn.CanReserve:{!pawn.CanReserve(pawn2, 1, -1, null, forced)},\n" +
+                if (!pawn.CanReserve(pawn2, 1, -1, null, forced))
+                {
+                    Log.Message($"[Smarter Capture]{pawn.Name} is not assigned to rescue {pawn2.Name} because it has been or it cant be reserve (Maybe someone is already on the way?) \n");
+                }
+                else
+                {
+                    Log.Message($"[Smarter Capture]{pawn2.Name} is not a valid target for capture because on of the following is true:\n" +
+                    $"pawn2.InBed(): {pawn2.InBed()},\n " +
                     $"DangerIsNear(): {DangerIsNear(pawn, pawn2, 40f)}");
+                }
+                
             }
             return false;
         }
@@ -59,6 +55,11 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
         var building_Bed = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
         if (building_Bed == null)
         {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] Trying to find a bed for {pawn2.Name} but failed. Will try ignoreOtherReservations");
+
+            }
             building_Bed = RestUtility.FindBedFor(pawn2, pawn, false, true, GuestStatus.Prisoner);
         }
 
@@ -66,13 +67,18 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
         {
             if (StartUp.settings.debug)
             {
-                Log.Message($"[Smarter Capture] Trying to reserve a bed for {t.def.defName} and the result is {pawn.CanReserve(building_Bed, 1, -1, null, forced)}");
+                Log.Message($"[Smarter Capture] Found a bed, trying to it for {pawn2.Name} and the result is {pawn.CanReserve(building_Bed, 1, -1, null, forced)}");
             }
             return pawn.CanReserve(building_Bed, 1, -1, null, forced);
         }
 
         Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
             MessageTypeDefOf.RejectInput, false);
+        if (StartUp.settings.debug)
+        {
+            Log.Message($"[Smarter Capture] Trying to find a bed for {pawn2.Name} with ignoreOtherReservations and failed again");
+
+        }
         return false;
     }
 
@@ -145,19 +151,8 @@ public class WorkGiver_CapturePrisoners_FirstAid: WorkGiver_CapturePrisoners
     public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
         if (t is not Pawn { Downed: true } pawn2 || pawn2.Faction == pawn.Faction ||
-            t.Map.designationManager.DesignationOn(t, Designation) == null)
+            t.Map.designationManager.DesignationOn(t, this.Designation) == null)
         {
-            if (StartUp.settings.debug)
-            {
-                Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture. because on of the following is true: \n" +
-                    $"t is not Pawn: {t is not Pawn}\n");
-                if (!(t is not Pawn { Downed: true }))
-                {
-                    pawn2 = (Pawn)t;
-                    Log.Message($"pawn2.Faction == pawn.Faction: {pawn2.Faction == pawn.Faction}\n" +
-                        $"t.Map.designationManager.DesignationOn(t, Designation) == null:{t.Map.designationManager.DesignationOn(t, Designation) == null}");
-                }
-            }
             return false;
         }
 
@@ -165,10 +160,17 @@ public class WorkGiver_CapturePrisoners_FirstAid: WorkGiver_CapturePrisoners
         {
             if (StartUp.settings.debug)
             {
-                Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture because on of the following is true:\n" +
-                    $" pawn2.InBed(): {pawn2.InBed()},\n " +
-                    $"!pawn.CanReserve:{!pawn.CanReserve(pawn2, 1, -1, null, forced)},\n" +
+                if (!pawn.CanReserve(pawn2, 1, -1, null, forced))
+                {
+                    Log.Message($"[Smarter Capture]{pawn.Name} is not assigned to rescue {pawn2.Name} because it has been or it cant be reserve (Maybe someone is already on the way?) \n");
+                }
+                else
+                {
+                    Log.Message($"[Smarter Capture]{pawn2.Name} is not a valid target for capture because on of the following is true:\n" +
+                    $"pawn2.InBed(): {pawn2.InBed()},\n " +
                     $"DangerIsNear(): {DangerIsNear(pawn, pawn2, 40f)}");
+                }
+
             }
             return false;
         }
@@ -176,6 +178,11 @@ public class WorkGiver_CapturePrisoners_FirstAid: WorkGiver_CapturePrisoners
         var building_Bed = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
         if (building_Bed == null)
         {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] Trying to find a bed for {pawn2.Name} but failed. Will try ignoreOtherReservations");
+
+            }
             building_Bed = RestUtility.FindBedFor(pawn2, pawn, false, true, GuestStatus.Prisoner);
         }
 
@@ -183,13 +190,18 @@ public class WorkGiver_CapturePrisoners_FirstAid: WorkGiver_CapturePrisoners
         {
             if (StartUp.settings.debug)
             {
-                Log.Message($"[Smarter Capture] Trying to reserve a bed for {t.def.defName} and the result is {pawn.CanReserve(building_Bed, 1, -1, null, forced)}");
+                Log.Message($"[Smarter Capture] Found a bed, trying to it for {pawn2.Name} and the result is {pawn.CanReserve(building_Bed, 1, -1, null, forced)}");
             }
             return pawn.CanReserve(building_Bed, 1, -1, null, forced);
         }
 
         Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
             MessageTypeDefOf.RejectInput, false);
+        if (StartUp.settings.debug)
+        {
+            Log.Message($"[Smarter Capture] Trying to find a bed for {pawn2.Name} with ignoreOtherReservations and failed again");
+
+        }
         return false;
     }
 
@@ -199,7 +211,7 @@ public class WorkGiver_CapturePrisoners_FirstAid: WorkGiver_CapturePrisoners
         var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
 
 if (StartUp.settings.debug) { 
-        Log.Message("Assigned "+pawn.Name+" to rescue" + pawn2.Name);
+        Log.Message("Assigned "+pawn.Name+" to rescue " + pawn2.Name);
 }
 
         if (StartUp.FirstAid && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Doctor))
@@ -239,35 +251,38 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
     public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
         if (t is not Pawn { Downed: true } pawn2 || pawn2.Faction == pawn.Faction ||
-            t.Map.designationManager.DesignationOn(t, Designation) == null)
+            t.Map.designationManager.DesignationOn(t, this.Designation) == null)
         {
-if (StartUp.settings.debug) { 
-            Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture. because on of the following is true: \n" +
-                $"t is not Pawn: {t is not Pawn}\n");
-            if (!(t is not Pawn { Downed: true }))
-                {
-                    pawn2 = (Pawn)t;
-                    Log.Message($"pawn2.Faction == pawn.Faction: {pawn2.Faction == pawn.Faction}\n" +
-                        $"t.Map.designationManager.DesignationOn(t, Designation) == null:{t.Map.designationManager.DesignationOn(t, Designation) == null}");
-                }
-}
             return false;
         }
 
         if (pawn2.InBed() || !pawn.CanReserve(pawn2, 1, -1, null, forced) || DangerIsNear(pawn, pawn2, 40f))
         {
-if (StartUp.settings.debug) { 
-            Log.Message($"[Smarter Capture]{t.def.defName} is not a valid target for capture because on of the following is true:\n" +
-                $" pawn2.InBed(): {pawn2.InBed()},\n " +
-                $"!pawn.CanReserve:{!pawn.CanReserve(pawn2, 1, -1, null, forced)},\n" +
-                $"DangerIsNear(): {DangerIsNear(pawn, pawn2, 40f)}");
-}
+            if (StartUp.settings.debug)
+            {
+                if (!pawn.CanReserve(pawn2, 1, -1, null, forced))
+                {
+                    Log.Message($"[Smarter Capture]{pawn.Name} is not assigned to rescue {pawn2.Name} because it has been or it cant be reserve (Maybe someone is already on the way?) \n");
+                }
+                else
+                {
+                    Log.Message($"[Smarter Capture]{pawn2.Name} is not a valid target for capture because on of the following is true:\n" +
+                    $"pawn2.InBed(): {pawn2.InBed()},\n " +
+                    $"DangerIsNear(): {DangerIsNear(pawn, pawn2, 40f)}");
+                }
+
+            }
             return false;
         }
 
         var building_Bed = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
         if (building_Bed == null)
         {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] Trying to find a bed for {pawn2.Name} but failed. Will try ignoreOtherReservations");
+
+            }
             building_Bed = RestUtility.FindBedFor(pawn2, pawn, false, true, GuestStatus.Prisoner);
         }
 
@@ -275,13 +290,18 @@ if (StartUp.settings.debug) {
         {
             if (StartUp.settings.debug)
             {
-                Log.Message($"[Smarter Capture] Trying to reserve a bed for {t.def.defName} and the result is {pawn.CanReserve(building_Bed, 1, -1, null, forced)}");
+                Log.Message($"[Smarter Capture] Found a bed, trying to it for {pawn2.Name} and the result is {pawn.CanReserve(building_Bed, 1, -1, null, forced)}");
             }
-                return pawn.CanReserve(building_Bed, 1, -1, null, forced);
+            return pawn.CanReserve(building_Bed, 1, -1, null, forced);
         }
 
         Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
             MessageTypeDefOf.RejectInput, false);
+        if (StartUp.settings.debug)
+        {
+            Log.Message($"[Smarter Capture] Trying to find a bed for {pawn2.Name} with ignoreOtherReservations and failed again");
+
+        }
         return false;
     }
 
