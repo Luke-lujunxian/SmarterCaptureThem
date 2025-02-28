@@ -85,9 +85,9 @@ public class Designator_CapturePawn : Designator
         bool canRevive = pawn.health.hediffSet.HasPreventsDeath;
         if (canRevive)
         {
-#if DEBUG
+if (StartUp.settings.debug) { 
             Log.Message(pawn.Name + "will revive, capture it regardless of hediff");
-#endif
+}
             return false;
 
         }
@@ -96,16 +96,16 @@ public class Designator_CapturePawn : Designator
 
         if (willBleadingOut)
         {
-#if DEBUG
-            Log.Message(pawn.Name + "will BleedOut in " + HealthUtility.TicksUntilDeathDueToBloodLoss(pawn) / 2500 + " hour(s), dont capture it because it is under the set threadhold " + minHours + ". Bleed rate: " + pawn.health.hediffSet.BleedRateTotal);
-#endif
+if (StartUp.settings.debug) { 
+            Log.Message(pawn.Name + "will BleedOut in " + HealthUtility.TicksUntilDeathDueToBloodLoss(pawn) / 2500 + " hour(s), dont capture it because it is under the set threadhold " + StartUp.settings.bleedoutMinHours + ". Bleed rate: " + pawn.health.hediffSet.BleedRateTotal);
+}
             return willBleadingOut;
         }
         else
         {
-#if DEBUG
+if (StartUp.settings.debug) { 
             Log.Message(pawn.Name + "will BleedOut in " + HealthUtility.TicksUntilDeathDueToBloodLoss(pawn) / 2500 + " hour(s), capture it. Bleed rate: " + pawn.health.hediffSet.BleedRateTotal);
-#endif
+}
 
         }
 

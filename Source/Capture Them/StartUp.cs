@@ -41,31 +41,30 @@ public class StartUp : Mod
                     {
                         FirstAid = true;
                         var info1 = harmony.Patch(AccessTools.Method(typeof(ReverseDesignatorDatabase), "InitDesignators"), postfix: new HarmonyMethod(typeof(ReverseDesignatorDatabase_InitDesignators_FirstAid), nameof(ReverseDesignatorDatabase_InitDesignators_FirstAid.Postfix)));
-
-#if DEBUG
+if (StartUp.settings.debug) { 
                         
                         Log.Message("First Aid mod detected");
                         Log.Message(info1.ToString());
-#endif
+}
                     }
                     else if (x.PackageId == ("ceteam.combatextended"))
                     {
                         CE = true;
                         var info2 = harmony.Patch(AccessTools.Method(typeof(ReverseDesignatorDatabase), "InitDesignators"), postfix: new HarmonyMethod(typeof(ReverseDesignatorDatabase_InitDesignators_CE), nameof(ReverseDesignatorDatabase_InitDesignators_CE.Postfix)));
 
-#if DEBUG
+if (StartUp.settings.debug) { 
                         Log.Message("CE mod detected");
                         Log.Message(info2.ToString());
 
-#endif
+}
                     }
                     else if(x.PackageId == ("troopersmith1.deathrattle"))
                     {
                         DeathRattle = true;
                         deathrattleHediffs = ["IntestinalFailure", "LiverFailure", "KidneyFailure", "ClinicalDeathNoHeartbeat", "ClinicalDeathAsphyxiation"];
-#if DEBUG
+if (StartUp.settings.debug) { 
     Log.Message("Death Rattle mod detected");
-#endif
+}
                     }
                 }
 
@@ -86,6 +85,7 @@ public class StartUp : Mod
         listingStandard.CheckboxLabeled("doVanillaTendSetting".Translate(), ref settings.doVanillaTend, "doVanillaTendSettingDesc".Translate());
         if (DeathRattle)
             listingStandard.CheckboxLabeled("giveUpMissingOrganSetting".Translate(), ref settings.giveUpMissingOrgan, "giveUpMissingOrganSettingDesc".Translate());
+        listingStandard.CheckboxLabeled("Debug", ref settings.debug, "Log will spam!");
 
         listingStandard.End();
 
@@ -113,6 +113,7 @@ public class SmartCaptureThemSettings : ModSettings
     public bool giveUpMissingOrgan = true;
     public bool checkForDanger = true;
     public bool doVanillaTend = false;
+    public bool debug = false;
 
     /// <summary>
     /// The part that writes our settings to file. Note that saving is by ref.
@@ -124,6 +125,7 @@ public class SmartCaptureThemSettings : ModSettings
         Scribe_Values.Look(ref giveUpMissingOrgan, "giveUpMissingOrgan", true);
         Scribe_Values.Look(ref checkForDanger, "checkForDanger", true);
         Scribe_Values.Look(ref doVanillaTend, "doVanillaTent", false);
+        Scribe_Values.Look(ref debug, "debug", false);
 
         base.ExposeData();
     }
