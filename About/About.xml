@@ -19,5 +19,5 @@
     <li>brrainz.harmony</li>
   </loadAfter>
   <description></description>
-  <modVersion IgnoreIfNoMatchingField="True">1.5.0</modVersion>
+  <modVersion IgnoreIfNoMatchingField="True">1.6.0</modVersion>
 </ModMetaData>

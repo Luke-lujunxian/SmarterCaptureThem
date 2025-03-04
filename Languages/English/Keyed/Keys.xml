@@ -16,4 +16,6 @@
   <checkForDangerSettingDesc>By dafault, pawn will not perform rescue if there is danger around target. This may cause delay in rescue. Disable at your own risk</checkForDangerSettingDesc>
   <doVanillaTendSetting>Do vanilla tending before capture</doVanillaTendSetting>
   <doVanillaTendSettingDesc>Pawn will try to tend target using vanilla tending. Note that a pawn will very low medical skill may take too long tend.</doVanillaTendSettingDesc>
+  <doArrestFirstSetting>Arrest target first</doArrestFirstSetting>
+  <doArrestFirstSettingDesc>Make sure target don't stand up and fight your doctor by arresting them with the arrest here provided by [RH2] CPERS: Arrest Here!</doArrestFirstSettingDesc>
 </LanguageData>

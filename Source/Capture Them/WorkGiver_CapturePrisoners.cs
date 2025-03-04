@@ -1,6 +1,6 @@
+using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
-using RimWorld;
 using Verse;
 using Verse.AI;
 
@@ -47,7 +47,11 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
                     $"pawn2.InBed(): {pawn2.InBed()},\n " +
                     $"DangerIsNear(): {DangerIsNear(pawn, pawn2, 40f)}");
                 }
-                
+
+            }
+            if (pawn2.InBed())
+            {
+                pawn2.Map.designationManager.TryRemoveDesignationOn(pawn2, CaptureThemDefOf.CaptureThemCapture);
             }
             return false;
         }
@@ -82,24 +86,92 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
         return false;
     }
 
+    public Job ArrestFirst(Pawn pawn, Pawn pawn2)
+    {
+        if (StartUp.ArrestHere && StartUp.settings.doArrestFirst && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Warden) && !pawn2.IsPrisoner)
+        {
+            if (StartUp.CP_ImprisonInPlace == null)
+            {
+                StartUp.CP_ImprisonInPlace = DefDatabase<JobDef>.GetNamed("CP_ImprisonInPlace");
+            }
+
+            if (pawn2.health.hediffSet.BleedRateTotal > 0 && HealthUtility.TicksUntilDeathDueToBloodLoss(pawn2) / 2500f < StartUp.settings.maxBleedoutFirstAid)
+            {
+                if (StartUp.settings.debug)
+                {
+                    Log.Message("Doing arrest on " + pawn2.Name + " first");
+                }
+                Job job = JobMaker.MakeJob(StartUp.CP_ImprisonInPlace, pawn2);
+                job.count = 1;
+                PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.Capturing, KnowledgeAmount.Total);
+                return job;
+            }
+        }
+        return null;
+    }
+
     public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
         var pawn2 = t as Pawn;
-        if (StartUp.settings.doVanillaTend && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Doctor))
+
+        if (ArrestFirst(pawn, pawn2) is Job job3 && job3 != null)
+        {
+            return job3;
+        }
+
+        if (StartUp.settings.doVanillaTend && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Doctor) )
         {
 
             if (pawn2.health.hediffSet.BleedRateTotal > 0 && HealthUtility.TicksUntilDeathDueToBloodLoss(pawn2) / 2500f < StartUp.settings.maxBleedoutFirstAid)
             {
-if (StartUp.settings.debug) { 
-                Log.Message("Doing vanilla tend on " + pawn2.Name + " first");
-}
+                if (StartUp.settings.debug)
+                {
+                    Log.Message("Doing vanilla tend on " + pawn2.Name + " first");
+                }
                 Thing medicine2 = HealthAIUtility.FindBestMedicine(pawn, pawn2, onlyUseInventory: true);
-                Job job2 = JobMaker.MakeJob(JobDefOf.TendPatient, pawn2, medicine2);
+                Job job2;
+                if (medicine2 != null)
+                {
+                    job2 = JobMaker.MakeJob(JobDefOf.TendPatient, pawn2, medicine2);
+                }
+                else
+                {
+                    job2 = JobMaker.MakeJob(JobDefOf.TendPatient, pawn2);
+                }
                 job2.count = 1;
-                job2.draftedTend = true;
-                pawn.jobs.TryTakeOrderedJob(job2, JobTag.Misc);
-                return null;
+                //job2.draftedTend = true;
+
+                /*                if ((pawn.CurJob != null && (pawn.CurJob.JobIsSameAs(pawn, job2))))
+                                {
+                                    return null;
+                                }
+                                pawn.stances.CancelBusyStanceSoft();
+                                pawn.jobs.ClearQueuedJobs();
+                                if (job2.TryMakePreToilReservations(pawn, errorOnFailed: true))
+                                {
+                                    pawn.jobs.jobQueue.EnqueueLast(job2, JobTag.Misc);
+                                    return null;
+                                }*/
+
+                // I don't know why, but this make it works
+                if (StartUp.ArrestHere && StartUp.settings.doArrestFirst)
+                {
+                    //If assigned a job first, this will make tending job done immediately
+                    return job2;
+                }
+                else
+                {
+                    pawn.stances.CancelBusyStanceSoft();
+                    pawn.jobs.ClearQueuedJobs();
+                    //But if you don't have a job first, will get the 10 jobs in 10 ticks error if directly return
+                    pawn.jobs.TryTakeOrderedJob(job2);
+                    return null;
+                }
             }
+        }
+        if (StartUp.settings.debug)
+        {
+            Log.Message("Carrying " + pawn2.Name + " to bed");
         }
         var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
         var job = JobMaker.MakeJob(Job, pawn2, t2);
@@ -131,7 +203,7 @@ if (StartUp.settings.debug) {
     }
 }
 
-public class WorkGiver_CapturePrisoners_FirstAid: WorkGiver_CapturePrisoners
+public class WorkGiver_CapturePrisoners_FirstAid : WorkGiver_CapturePrisoners
 {
     protected new DesignationDef Designation => CaptureThemDefOf.CaptureThemCapture_FirstAid;
 
@@ -172,6 +244,10 @@ public class WorkGiver_CapturePrisoners_FirstAid: WorkGiver_CapturePrisoners
                 }
 
             }
+            if (pawn2.InBed())
+            {
+                pawn2.Map.designationManager.TryRemoveDesignationOn(pawn2, CaptureThemDefOf.CaptureThemCapture_FirstAid);
+            }
             return false;
         }
 
@@ -210,9 +286,14 @@ public class WorkGiver_CapturePrisoners_FirstAid: WorkGiver_CapturePrisoners
         var pawn2 = t as Pawn;
         var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
 
-if (StartUp.settings.debug) { 
-        Log.Message("Assigned "+pawn.Name+" to rescue " + pawn2.Name);
-}
+        if (StartUp.settings.debug)
+        {
+            Log.Message("Assigned " + pawn.Name + " to rescue " + pawn2.Name);
+        }
+        if (ArrestFirst(pawn, pawn2) is Job job3 && job3 != null)
+        {
+            return job3;
+        }
 
         if (StartUp.FirstAid && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Doctor))
         {
@@ -223,9 +304,10 @@ if (StartUp.settings.debug) {
 
             if (pawn2.health.hediffSet.BleedRateTotal > 0 && HealthUtility.TicksUntilDeathDueToBloodLoss(pawn2) / 2500f < StartUp.settings.maxBleedoutFirstAid)
             {
-if (StartUp.settings.debug) { 
-                Log.Message("Doing FirstAid on " + pawn2.Name + " first");
-}
+                if (StartUp.settings.debug)
+                {
+                    Log.Message("Doing FirstAid on " + pawn2.Name + " first");
+                }
                 return JobMaker.MakeJob(StartUp.CP_FirstAid, pawn2);
             }
         }
@@ -272,6 +354,10 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
                 }
 
             }
+            if (pawn2.InBed())
+            {
+                pawn2.Map.designationManager.TryRemoveDesignationOn(pawn2, CaptureThemDefOf.CaptureThemCapture_CE);
+            }
             return false;
         }
 
@@ -312,6 +398,12 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
     public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
         var pawn2 = t as Pawn;
+
+        if (ArrestFirst(pawn, pawn2) is Job job3 && job3 != null)
+        {
+            return job3;
+        }
+
         var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
 
         if (StartUp.CE && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Doctor))
@@ -321,15 +413,19 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
                 StartUp.CEStablize = DefDatabase<JobDef>.GetNamed("Stabilize");
             }
 
-            if (pawn2.health.hediffSet.BleedRateTotal>0 && HealthUtility.TicksUntilDeathDueToBloodLoss(pawn2) / 2500f < StartUp.settings.maxBleedoutFirstAid)
+            if (pawn2.health.hediffSet.BleedRateTotal > 0 && HealthUtility.TicksUntilDeathDueToBloodLoss(pawn2) / 2500f < StartUp.settings.maxBleedoutFirstAid)
             {
-if (StartUp.settings.debug) { 
-                Log.Message("Doing CE Stabilize on " + pawn.Name + " first");
-}
+                if (StartUp.settings.debug)
+                {
+                    Log.Message("Doing CE Stabilize on " + pawn.Name + " first");
+                }
                 // Take from CE https://github.com/CombatExtended-Continued/CombatExtended/blob/ba83aaf2d94c95c3ce1f10af0500e3aed21e19bc/Source/CombatExtended/Harmony/Harmony_FloatMenuMakerMap.cs#L165
                 if (pawn.inventory == null || pawn.inventory.innerContainer == null || !pawn.inventory.innerContainer.Any(t => t.def.IsMedicine))
                 {
-
+                    if (StartUp.settings.debug)
+                    {
+                        Log.Message($"{pawn.Name} has no medicine on inventory");
+                    }
                 }
                 else
                 {

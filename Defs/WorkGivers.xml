@@ -18,7 +18,7 @@
     <label>Capture pawns</label>
     <giverClass>SmartCaptureThem.WorkGiver_CapturePrisoners</giverClass>
     <workType>CaptureThemCapture</workType>
-    <priorityInType>70</priorityInType>
+    <priorityInType>100</priorityInType>
     <verb>capture</verb>
     <gerund>capturing</gerund>
     <emergency>true</emergency>
@@ -32,7 +32,7 @@
     <label>Do FirstAid and Capture pawns</label>
     <giverClass>SmartCaptureThem.WorkGiver_CapturePrisoners_FirstAid</giverClass>
     <workType>CaptureThemCapture</workType>
-    <priorityInType>70</priorityInType>
+    <priorityInType>100</priorityInType>
     <verb>capture</verb>
     <gerund>capturing</gerund>
     <emergency>true</emergency>
@@ -46,7 +46,7 @@
     <label>Do CE stablizing and Capture pawns</label>
     <giverClass>SmartCaptureThem.WorkGiver_CapturePrisoners_CE</giverClass>
     <workType>CaptureThemCapture</workType>
-    <priorityInType>70</priorityInType>
+    <priorityInType>100</priorityInType>
     <verb>capture</verb>
     <gerund>capturing</gerund>
     <emergency>true</emergency>

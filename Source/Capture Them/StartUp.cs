@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Capture_Them.HarmonyPatches;
 using HarmonyLib;
 using RimWorld;
 using SmartCaptureThem.HarmonyPatches;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -17,8 +15,10 @@ public class StartUp : Mod
     public static bool CE = false;
     public static bool FirstAid = false;
     public static bool DeathRattle = false;
+    public static bool ArrestHere = false;
     public static JobDef CP_FirstAid;
     public static JobDef CEStablize;
+    public static JobDef CP_ImprisonInPlace;
     public static HashSet<String> deathrattleHediffs;
     public static SmartCaptureThemSettings settings;
 
@@ -27,7 +27,7 @@ public class StartUp : Mod
         var harmony = new Harmony("SmartCaptureThem.patch");
         harmony.Patch(AccessTools.Method(typeof(ReverseDesignatorDatabase), "InitDesignators"), postfix: new HarmonyMethod(typeof(ReverseDesignatorDatabase_InitDesignators), nameof(ReverseDesignatorDatabase_InitDesignators.Postfix)));
         harmony.Patch(AccessTools.Method(typeof(Pawn_HealthTracker), "MakeUndowned"), postfix: new HarmonyMethod(typeof(Pawn_HealthTracker_MakeUndowned), nameof(Pawn_HealthTracker_MakeUndowned.Prefix)));
-        harmony.Patch(AccessTools.Method(typeof(Pawn_GuestTracker), nameof(Pawn_GuestTracker.SetGuestStatus)), postfix: new HarmonyMethod(typeof(Pawn_GuestTracker_SetGuestStatus), nameof(Pawn_GuestTracker_SetGuestStatus.Postfix)));
+        //harmony.Patch(AccessTools.Method(typeof(Pawn_GuestTracker), nameof(Pawn_GuestTracker.SetGuestStatus)), postfix: new HarmonyMethod(typeof(Pawn_GuestTracker_SetGuestStatus), nameof(Pawn_GuestTracker_SetGuestStatus.Postfix)));
 
         settings = GetSettings<SmartCaptureThemSettings>();
 
@@ -41,30 +41,41 @@ public class StartUp : Mod
                     {
                         FirstAid = true;
                         var info1 = harmony.Patch(AccessTools.Method(typeof(ReverseDesignatorDatabase), "InitDesignators"), postfix: new HarmonyMethod(typeof(ReverseDesignatorDatabase_InitDesignators_FirstAid), nameof(ReverseDesignatorDatabase_InitDesignators_FirstAid.Postfix)));
-if (StartUp.settings.debug) { 
-                        
-                        Log.Message("First Aid mod detected");
-                        Log.Message(info1.ToString());
-}
+                        if (StartUp.settings.debug)
+                        {
+
+                            Log.Message("First Aid mod detected");
+                            Log.Message(info1.ToString());
+                        }
                     }
                     else if (x.PackageId == ("ceteam.combatextended"))
                     {
                         CE = true;
                         var info2 = harmony.Patch(AccessTools.Method(typeof(ReverseDesignatorDatabase), "InitDesignators"), postfix: new HarmonyMethod(typeof(ReverseDesignatorDatabase_InitDesignators_CE), nameof(ReverseDesignatorDatabase_InitDesignators_CE.Postfix)));
 
-if (StartUp.settings.debug) { 
-                        Log.Message("CE mod detected");
-                        Log.Message(info2.ToString());
+                        if (StartUp.settings.debug)
+                        {
+                            Log.Message("CE mod detected");
+                            Log.Message(info2.ToString());
 
-}
+                        }
                     }
-                    else if(x.PackageId == ("troopersmith1.deathrattle"))
+                    else if (x.PackageId == ("troopersmith1.deathrattle"))
                     {
                         DeathRattle = true;
                         deathrattleHediffs = ["IntestinalFailure", "LiverFailure", "KidneyFailure", "ClinicalDeathNoHeartbeat", "ClinicalDeathAsphyxiation"];
-if (StartUp.settings.debug) { 
-    Log.Message("Death Rattle mod detected");
-}
+                        if (StartUp.settings.debug)
+                        {
+                            Log.Message("Death Rattle mod detected");
+                        }
+                    }
+                    else if (x.PackageId == ("rh2.cpers.arrest.here").ToLower())
+                    {
+                        ArrestHere = true;
+                        if (StartUp.settings.debug)
+                        {
+                            Log.Message("Arrest Here detected");
+                        }
                     }
                 }
 
@@ -83,6 +94,8 @@ if (StartUp.settings.debug) {
         settings.maxBleedoutFirstAid = listingStandard.SliderLabeled($"{settings.maxBleedoutFirstAid:F1} h", settings.maxBleedoutFirstAid, 1, 24, 0.2f);
         listingStandard.CheckboxLabeled("checkForDangerSetting".Translate(), ref settings.checkForDanger, "checkForDangerSettingDesc".Translate());
         listingStandard.CheckboxLabeled("doVanillaTendSetting".Translate(), ref settings.doVanillaTend, "doVanillaTendSettingDesc".Translate());
+        if (ArrestHere)
+            listingStandard.CheckboxLabeled("doArrestFirstSetting".Translate(), ref settings.doArrestFirst, "doArrestFirstSettingDesc".Translate());
         if (DeathRattle)
             listingStandard.CheckboxLabeled("giveUpMissingOrganSetting".Translate(), ref settings.giveUpMissingOrgan, "giveUpMissingOrganSettingDesc".Translate());
         listingStandard.CheckboxLabeled("Debug", ref settings.debug, "Log will spam!");
@@ -113,6 +126,7 @@ public class SmartCaptureThemSettings : ModSettings
     public bool giveUpMissingOrgan = true;
     public bool checkForDanger = true;
     public bool doVanillaTend = false;
+    public bool doArrestFirst = true;
     public bool debug = false;
 
     /// <summary>
@@ -125,6 +139,7 @@ public class SmartCaptureThemSettings : ModSettings
         Scribe_Values.Look(ref giveUpMissingOrgan, "giveUpMissingOrgan", true);
         Scribe_Values.Look(ref checkForDanger, "checkForDanger", true);
         Scribe_Values.Look(ref doVanillaTend, "doVanillaTent", false);
+        Scribe_Values.Look(ref doArrestFirst, "doArrestFirst", true);
         Scribe_Values.Look(ref debug, "debug", false);
 
         base.ExposeData();
