@@ -182,6 +182,16 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
 
     protected static bool DangerIsNear(Pawn pawn, Pawn p, float radius)
     {
+#if v16
+        if (VacuumUtility.VacuumConcernTo(p.Position, pawn))//Will not walk into vacuum unprotected
+        {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] position of {p.Name} is danger vacuum to {pawn.Name}");
+            }
+            return true;
+        }
+#endif
         if (!p.Spawned || !StartUp.settings.checkForDanger)
         {
             return false;
@@ -198,6 +208,8 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
                 return true;
             }
         }
+
+
 
         return false;
     }

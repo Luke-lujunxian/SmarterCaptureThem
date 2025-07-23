@@ -18,7 +18,10 @@ public class Designator_CapturePawn : Designator
 
     protected override DesignationDef Designation => CaptureThemDefOf.CaptureThemCapture;
 
+#if v16
+#else
     public override int DraggableDimensions => 2;
+#endif
 
     public override AcceptanceReport CanDesignateCell(IntVec3 loc)
     {
