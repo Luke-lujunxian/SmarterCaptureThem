@@ -27,8 +27,27 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
 
     public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
-        if (t is not Pawn { Downed: true } pawn2 || pawn2.Faction == pawn.Faction ||
+        if (t is not Pawn { Downed: true } pawn2 ||
             t.Map.designationManager.DesignationOn(t, this.Designation) == null)
+        {
+            return false;
+        }
+
+        // 目标已经躺在床上（例如已被抬进囚犯床）：抓捕目标已达成，移除标记
+        if (pawn2.InBed())
+        {
+            pawn2.Map.designationManager.TryRemoveDesignationOn(pawn2, this.Designation);
+            return false;
+        }
+
+        // 已经逮捕（目标已成为囚犯）：不再重复抓捕，改为就地治疗，避免反复弹出「无法抓捕」的提示
+        if (pawn2.IsPrisoner)
+        {
+            return InPlaceTendEnabled(pawn) && IsBleedingOut(pawn2) &&
+                   pawn.CanReserve(pawn2, 1, -1, null, forced) && !DangerIsNear(pawn, pawn2, 40f);
+        }
+
+        if (pawn2.Faction == pawn.Faction)
         {
             return false;
         }
@@ -48,10 +67,6 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
                     $"DangerIsNear(): {DangerIsNear(pawn, pawn2, 40f)}");
                 }
 
-            }
-            if (pawn2.InBed())
-            {
-                pawn2.Map.designationManager.TryRemoveDesignationOn(pawn2, CaptureThemDefOf.CaptureThemCapture);
             }
             return false;
         }
@@ -86,8 +101,12 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
             return true;
         }
 
-        Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
-            MessageTypeDefOf.RejectInput, false);
+        // 只在玩家主动右键时提示，工作扫描会反复调用本方法，否则会不停弹出
+        if (forced)
+        {
+            Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
+                MessageTypeDefOf.RejectInput, false);
+        }
         if (StartUp.settings.debug)
         {
             Log.Message($"[Smarter Capture] Trying to find a bed for {pawn2.Name} with ignoreOtherReservations and failed again");
@@ -133,9 +152,80 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
         return job;
     }
 
+    /// <summary>
+    /// 查找可用于关押目标的囚犯床，第二次查找忽略其他人的预定。
+    /// </summary>
+    protected static Building_Bed FindPrisonerBed(Pawn pawn, Pawn pawn2)
+    {
+        var bed = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
+        if (bed == null)
+        {
+            bed = RestUtility.FindBedFor(pawn2, pawn, false, true, GuestStatus.Prisoner);
+        }
+        return bed;
+    }
+
+    /// <summary>
+    /// 目标是否因失血而需要在被捕后立刻处理。
+    /// </summary>
+    protected static bool IsBleedingOut(Pawn pawn2)
+    {
+        return pawn2.health.hediffSet.BleedRateTotal > 0 &&
+               HealthUtility.TicksUntilDeathDueToBloodLoss(pawn2) / 2500f < StartUp.settings.maxBleedoutFirstAid;
+    }
+
+    /// <summary>
+    /// 本变体是否启用了就地治疗。会被 HasJobOnHthing 频繁调用，必须无副作用。
+    /// </summary>
+    protected virtual bool InPlaceTendEnabled(Pawn pawn)
+    {
+        return StartUp.settings.doVanillaTend && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Doctor);
+    }
+
+    /// <summary>
+    /// 就地治疗任务（不依赖床位）。只有目标已经被逮捕时才会被派发。
+    /// </summary>
+    protected virtual Job InPlaceTendJob(Pawn pawn, Pawn pawn2)
+    {
+        if (!InPlaceTendEnabled(pawn) || !IsBleedingOut(pawn2))
+        {
+            return null;
+        }
+
+        Thing medicine = HealthAIUtility.FindBestMedicine(pawn, pawn2, onlyUseInventory: true);
+        Job job;
+        if (medicine != null)
+        {
+            job = JobMaker.MakeJob(JobDefOf.TendPatient, pawn2, medicine);
+        }
+        else
+        {
+            job = JobMaker.MakeJob(JobDefOf.TendPatient, pawn2);
+        }
+        job.count = 1;
+        return job;
+    }
+
     public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
         var pawn2 = t as Pawn;
+
+        // 已经逮捕（目标已成为囚犯）：不再重复抓捕，改为就地治疗
+        if (pawn2.IsPrisoner)
+        {
+            return InPlaceTendJob(pawn, pawn2);
+        }
+
+        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
+        var t2 = FindPrisonerBed(pawn, pawn2);
+        if (t2 == null)
+        {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, arresting in place");
+            }
+            return ArrestInPlace(pawn, pawn2);
+        }
 
         if (ArrestFirst(pawn, pawn2) is Job job3 && job3 != null)
         {
@@ -192,22 +282,6 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
                 }
             }
         }
-        var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
-        if (t2 == null)
-        {
-            t2 = RestUtility.FindBedFor(pawn2, pawn, false, true, GuestStatus.Prisoner);
-        }
-
-        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
-        if (t2 == null)
-        {
-            if (StartUp.settings.debug)
-            {
-                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, arresting in place");
-            }
-            return ArrestInPlace(pawn, pawn2);
-        }
-
         if (StartUp.settings.debug)
         {
             Log.Message("Carrying " + pawn2.Name + " to bed");
@@ -272,8 +346,27 @@ public class WorkGiver_CapturePrisoners_FirstAid : WorkGiver_CapturePrisoners
 
     public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
-        if (t is not Pawn { Downed: true } pawn2 || pawn2.Faction == pawn.Faction ||
+        if (t is not Pawn { Downed: true } pawn2 ||
             t.Map.designationManager.DesignationOn(t, this.Designation) == null)
+        {
+            return false;
+        }
+
+        // 目标已经躺在床上（例如已被抬进囚犯床）：抓捕目标已达成，移除标记
+        if (pawn2.InBed())
+        {
+            pawn2.Map.designationManager.TryRemoveDesignationOn(pawn2, this.Designation);
+            return false;
+        }
+
+        // 已经逮捕（目标已成为囚犯）：不再重复抓捕，改为就地治疗，避免反复弹出「无法抓捕」的提示
+        if (pawn2.IsPrisoner)
+        {
+            return InPlaceTendEnabled(pawn) && IsBleedingOut(pawn2) &&
+                   pawn.CanReserve(pawn2, 1, -1, null, forced) && !DangerIsNear(pawn, pawn2, 40f);
+        }
+
+        if (pawn2.Faction == pawn.Faction)
         {
             return false;
         }
@@ -293,10 +386,6 @@ public class WorkGiver_CapturePrisoners_FirstAid : WorkGiver_CapturePrisoners
                     $"DangerIsNear(): {DangerIsNear(pawn, pawn2, 40f)}");
                 }
 
-            }
-            if (pawn2.InBed())
-            {
-                pawn2.Map.designationManager.TryRemoveDesignationOn(pawn2, CaptureThemDefOf.CaptureThemCapture_FirstAid);
             }
             return false;
         }
@@ -331,8 +420,12 @@ public class WorkGiver_CapturePrisoners_FirstAid : WorkGiver_CapturePrisoners
             return true;
         }
 
-        Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
-            MessageTypeDefOf.RejectInput, false);
+        // 只在玩家主动右键时提示，工作扫描会反复调用本方法，否则会不停弹出
+        if (forced)
+        {
+            Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
+                MessageTypeDefOf.RejectInput, false);
+        }
         if (StartUp.settings.debug)
         {
             Log.Message($"[Smarter Capture] Trying to find a bed for {pawn2.Name} with ignoreOtherReservations and failed again");
@@ -344,7 +437,23 @@ public class WorkGiver_CapturePrisoners_FirstAid : WorkGiver_CapturePrisoners
     public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
         var pawn2 = t as Pawn;
-        var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
+
+        // 已经逮捕（目标已成为囚犯）：不再重复抓捕，改为就地治疗
+        if (pawn2.IsPrisoner)
+        {
+            return InPlaceTendJob(pawn, pawn2);
+        }
+
+        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
+        var t2 = FindPrisonerBed(pawn, pawn2);
+        if (t2 == null)
+        {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, arresting in place");
+            }
+            return ArrestInPlace(pawn, pawn2);
+        }
 
         if (StartUp.settings.debug)
         {
@@ -372,25 +481,30 @@ public class WorkGiver_CapturePrisoners_FirstAid : WorkGiver_CapturePrisoners
             }
         }
 
-        if (t2 == null)
-        {
-            t2 = RestUtility.FindBedFor(pawn2, pawn, false, true, GuestStatus.Prisoner);
-        }
-
-        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
-        if (t2 == null)
-        {
-            if (StartUp.settings.debug)
-            {
-                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, arresting in place");
-            }
-            return ArrestInPlace(pawn, pawn2);
-        }
-
         var job = JobMaker.MakeJob(Job, pawn2, t2);
         job.count = 1;
         PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.Capturing, KnowledgeAmount.Total);
         return job;
+    }
+
+    protected override bool InPlaceTendEnabled(Pawn pawn)
+    {
+        return StartUp.FirstAid && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Doctor);
+    }
+
+    protected override Job InPlaceTendJob(Pawn pawn, Pawn pawn2)
+    {
+        if (!InPlaceTendEnabled(pawn) || !IsBleedingOut(pawn2))
+        {
+            return null;
+        }
+
+        if (StartUp.CP_FirstAid == null)
+        {
+            StartUp.CP_FirstAid = DefDatabase<JobDef>.GetNamed("CP_FirstAid");
+        }
+
+        return JobMaker.MakeJob(StartUp.CP_FirstAid, pawn2);
     }
 }
 
@@ -407,8 +521,27 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
     }
     public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
     {
-        if (t is not Pawn { Downed: true } pawn2 || pawn2.Faction == pawn.Faction ||
+        if (t is not Pawn { Downed: true } pawn2 ||
             t.Map.designationManager.DesignationOn(t, this.Designation) == null)
+        {
+            return false;
+        }
+
+        // 目标已经躺在床上（例如已被抬进囚犯床）：抓捕目标已达成，移除标记
+        if (pawn2.InBed())
+        {
+            pawn2.Map.designationManager.TryRemoveDesignationOn(pawn2, this.Designation);
+            return false;
+        }
+
+        // 已经逮捕（目标已成为囚犯）：不再重复抓捕，改为就地治疗，避免反复弹出「无法抓捕」的提示
+        if (pawn2.IsPrisoner)
+        {
+            return InPlaceTendEnabled(pawn) && IsBleedingOut(pawn2) &&
+                   pawn.CanReserve(pawn2, 1, -1, null, forced) && !DangerIsNear(pawn, pawn2, 40f);
+        }
+
+        if (pawn2.Faction == pawn.Faction)
         {
             return false;
         }
@@ -428,10 +561,6 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
                     $"DangerIsNear(): {DangerIsNear(pawn, pawn2, 40f)}");
                 }
 
-            }
-            if (pawn2.InBed())
-            {
-                pawn2.Map.designationManager.TryRemoveDesignationOn(pawn2, CaptureThemDefOf.CaptureThemCapture_CE);
             }
             return false;
         }
@@ -466,8 +595,12 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
             return true;
         }
 
-        Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
-            MessageTypeDefOf.RejectInput, false);
+        // 只在玩家主动右键时提示，工作扫描会反复调用本方法，否则会不停弹出
+        if (forced)
+        {
+            Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
+                MessageTypeDefOf.RejectInput, false);
+        }
         if (StartUp.settings.debug)
         {
             Log.Message($"[Smarter Capture] Trying to find a bed for {pawn2.Name} with ignoreOtherReservations and failed again");
@@ -484,12 +617,27 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
     {
         var pawn2 = t as Pawn;
 
+        // 已经逮捕（目标已成为囚犯）：不再重复抓捕，改为就地治疗
+        if (pawn2.IsPrisoner)
+        {
+            return InPlaceTendJob(pawn, pawn2);
+        }
+
+        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
+        var t2 = FindPrisonerBed(pawn, pawn2);
+        if (t2 == null)
+        {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, arresting in place");
+            }
+            return ArrestInPlace(pawn, pawn2);
+        }
+
         if (ArrestFirst(pawn, pawn2) is Job job3 && job3 != null)
         {
             return job3;
         }
-
-        var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
 
         if (StartUp.CE && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Doctor))
         {
@@ -528,24 +676,43 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
             }
         }
 
-        if (t2 == null)
-        {
-            t2 = RestUtility.FindBedFor(pawn2, pawn, false, true, GuestStatus.Prisoner);
-        }
-
-        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
-        if (t2 == null)
-        {
-            if (StartUp.settings.debug)
-            {
-                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, arresting in place");
-            }
-            return ArrestInPlace(pawn, pawn2);
-        }
-
         var job = JobMaker.MakeJob(Job, pawn2, t2);
         job.count = 1;
         PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.Capturing, KnowledgeAmount.Total);
         return job;
+    }
+
+    protected override bool InPlaceTendEnabled(Pawn pawn)
+    {
+        // 就地稳定需要随身携带药品，没有药品就无法执行
+        return StartUp.CE && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Doctor) &&
+               pawn.inventory != null && pawn.inventory.innerContainer != null &&
+               pawn.inventory.innerContainer.Any(t => t.def.IsMedicine);
+    }
+
+    protected override Job InPlaceTendJob(Pawn pawn, Pawn pawn2)
+    {
+        if (!InPlaceTendEnabled(pawn) || !IsBleedingOut(pawn2))
+        {
+            return null;
+        }
+
+        if (StartUp.CEStablize == null)
+        {
+            StartUp.CEStablize = DefDatabase<JobDef>.GetNamed("Stabilize");
+        }
+
+        // Take from CE https://github.com/CombatExtended-Continued/CombatExtended/blob/ba83aaf2d94c95c3ce1f10af0500e3aed21e19bc/Source/CombatExtended/Harmony/Harmony_FloatMenuMakerMap.cs#L165
+        // Drop medicine from inventory
+        Medicine medicine = (Medicine)pawn.inventory.innerContainer.OrderByDescending(t => t.GetStatValue(StatDefOf.MedicalPotency)).FirstOrDefault();
+        Thing medThing;
+        if (medicine != null && pawn.inventory.innerContainer.TryDrop(medicine, pawn.Position, pawn.Map, ThingPlaceMode.Direct, 1, out medThing))
+        {
+            Job job = JobMaker.MakeJob(StartUp.CEStablize, pawn2, medThing);
+            job.count = 1;
+            return job;
+        }
+
+        return null;
     }
 }
