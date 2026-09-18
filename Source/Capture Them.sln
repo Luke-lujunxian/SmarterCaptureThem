@@ -7,19 +7,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CaptureThem", "Capture Them
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		1.4|Any CPU = 1.4|Any CPU
-		1.5|Any CPU = 1.5|Any CPU
-		1.6|Any CPU = 1.6|Any CPU
+		v14|Any CPU = v14|Any CPU
+		v15|Any CPU = v15|Any CPU
+		v16|Any CPU = v16|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.1.4|Any CPU.ActiveCfg = 1.4|Any CPU
-		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.1.4|Any CPU.Build.0 = 1.4|Any CPU
-		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.1.5|Any CPU.ActiveCfg = 1.5|Any CPU
-		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.1.5|Any CPU.Build.0 = 1.5|Any CPU
-		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.1.6|Any CPU.ActiveCfg = 1.6|Any CPU
-		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.1.6|Any CPU.Build.0 = 1.6|Any CPU
+		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.v14|Any CPU.ActiveCfg = v14|Any CPU
+		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.v14|Any CPU.Build.0 = v14|Any CPU
+		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.v15|Any CPU.ActiveCfg = v15|Any CPU
+		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.v15|Any CPU.Build.0 = v15|Any CPU
+		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.v16|Any CPU.ActiveCfg = v16|Any CPU
+		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.v16|Any CPU.Build.0 = v16|Any CPU
 		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1F8F2C0-4001-4D2E-B418-5AE2B031058D}.Release|Any CPU.ActiveCfg = Release|Any CPU

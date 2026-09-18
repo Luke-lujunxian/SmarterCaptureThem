@@ -6,7 +6,9 @@
     <DebugType>None</DebugType>
     <LangVersion>latest</LangVersion>
     <FileVersion>1.5.0</FileVersion>
-    <Configurations>Debug;Release;1.5;1.4;1.6</Configurations>
+    <!-- 配置名必须是合法的 C# 标识符：MSBuild 会无条件把配置名当作预处理器符号传给编译器，
+         像 1.5 这种名字会被转成非法的 1_5 并产生 MSB3052 警告。用 v15/v16 还能直接充当版本宏 -->
+    <Configurations>Debug;Release;v15;v14;v16</Configurations>
   </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -23,17 +25,17 @@
     <ErrorReport>prompt</ErrorReport>
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '1.4|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v14|AnyCPU'">
     <OutputPath>..\..\1.4\Assemblies\</OutputPath>
     <Optimize>true</Optimize>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '1.5|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v15|AnyCPU'">
     <OutputPath>..\..\1.5\Assemblies\</OutputPath>
     <Optimize>True</Optimize>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '1.6|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'v16|AnyCPU'">
     <OutputPath>..\..\1.6\Assemblies\</OutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Optimize>True</Optimize>
@@ -56,7 +58,7 @@
     </Reference>
   </ItemGroup>
     <Choose>
-    <When Condition="'$(Configuration)' == '1.6'" />
+    <When Condition="'$(Configuration)' == 'v16'" />
     <When Condition="'$(Configuration)' == 'Debug'">
       <ItemGroup>
         <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.*">
@@ -64,14 +66,14 @@
         </PackageReference>
       </ItemGroup>
     </When>
-    <When Condition="'$(Configuration)' == '1.5'">
+    <When Condition="'$(Configuration)' == 'v15'">
       <ItemGroup>
         <PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.*">
           <ExcludeAssets>runtime</ExcludeAssets>
         </PackageReference>
       </ItemGroup>
     </When>
-        <When Condition="'$(Configuration)' == '1.4'">
+        <When Condition="'$(Configuration)' == 'v14'">
       <ItemGroup>
         <PackageReference Include="Krafs.Rimworld.Ref" Version="1.4.*">
           <ExcludeAssets>runtime</ExcludeAssets>
