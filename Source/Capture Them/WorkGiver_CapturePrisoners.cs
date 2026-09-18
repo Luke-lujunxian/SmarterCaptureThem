@@ -19,7 +19,7 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
 
     public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
     {
-        foreach (var designation in pawn.Map.designationManager.SpawnedDesignationsOfDef(Designation))
+        foreach (var designation in pawn.Map.designationManager.SpawnedDesignationsOfDef(Designation).ToList())
         {
             yield return designation.target.Thing;
         }
@@ -226,7 +226,7 @@ public class WorkGiver_CapturePrisoners_FirstAid : WorkGiver_CapturePrisoners
 
     public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
     {
-        foreach (var designation in pawn.Map.designationManager.SpawnedDesignationsOfDef(Designation))
+        foreach (var designation in pawn.Map.designationManager.SpawnedDesignationsOfDef(Designation).ToList())
         {
             yield return designation.target.Thing;
         }
@@ -337,7 +337,7 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
 
     public override IEnumerable<Thing> PotentialWorkThingsGlobal(Pawn pawn)
     {
-        foreach (var designation in pawn.Map.designationManager.SpawnedDesignationsOfDef(Designation))
+        foreach (var designation in pawn.Map.designationManager.SpawnedDesignationsOfDef(Designation).ToList())
         {
             yield return designation.target.Thing;
         }
