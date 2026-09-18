@@ -76,6 +76,16 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
             return pawn.CanReserve(building_Bed, 1, -1, null, forced);
         }
 
+        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
+        if (StartUp.ArrestHere && StartUp.settings.doArrestFirst && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Warden) && !pawn2.IsPrisoner)
+        {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, will arrest in place because Arrest Here is loaded");
+            }
+            return true;
+        }
+
         Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
             MessageTypeDefOf.RejectInput, false);
         if (StartUp.settings.debug)
@@ -90,24 +100,37 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
     {
         if (StartUp.ArrestHere && StartUp.settings.doArrestFirst && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Warden) && !pawn2.IsPrisoner)
         {
-            if (StartUp.CP_ImprisonInPlace == null)
-            {
-                StartUp.CP_ImprisonInPlace = DefDatabase<JobDef>.GetNamed("CP_ImprisonInPlace");
-            }
-
             if (pawn2.health.hediffSet.BleedRateTotal > 0 && HealthUtility.TicksUntilDeathDueToBloodLoss(pawn2) / 2500f < StartUp.settings.maxBleedoutFirstAid)
             {
                 if (StartUp.settings.debug)
                 {
                     Log.Message("Doing arrest on " + pawn2.Name + " first");
                 }
-                Job job = JobMaker.MakeJob(StartUp.CP_ImprisonInPlace, pawn2);
-                job.count = 1;
-                PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.Capturing, KnowledgeAmount.Total);
-                return job;
+                return ArrestInPlace(pawn, pawn2);
             }
         }
         return null;
+    }
+
+    /// <summary>
+    /// 原地逮捕。原版抓捕必须把目标搬到囚犯床，因此没有可用床位时只能依赖 [RH2] CPERS: Arrest Here! 提供的原地逮捕。
+    /// </summary>
+    protected Job ArrestInPlace(Pawn pawn, Pawn pawn2)
+    {
+        if (!StartUp.ArrestHere || !StartUp.settings.doArrestFirst || pawn.WorkTypeIsDisabled(WorkTypeDefOf.Warden) || pawn2.IsPrisoner)
+        {
+            return null;
+        }
+
+        if (StartUp.CP_ImprisonInPlace == null)
+        {
+            StartUp.CP_ImprisonInPlace = DefDatabase<JobDef>.GetNamed("CP_ImprisonInPlace");
+        }
+
+        Job job = JobMaker.MakeJob(StartUp.CP_ImprisonInPlace, pawn2);
+        job.count = 1;
+        PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.Capturing, KnowledgeAmount.Total);
+        return job;
     }
 
     public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
@@ -169,11 +192,26 @@ public class WorkGiver_CapturePrisoners : WorkGiver_RescueDowned
                 }
             }
         }
+        var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
+        if (t2 == null)
+        {
+            t2 = RestUtility.FindBedFor(pawn2, pawn, false, true, GuestStatus.Prisoner);
+        }
+
+        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
+        if (t2 == null)
+        {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, arresting in place");
+            }
+            return ArrestInPlace(pawn, pawn2);
+        }
+
         if (StartUp.settings.debug)
         {
             Log.Message("Carrying " + pawn2.Name + " to bed");
         }
-        var t2 = RestUtility.FindBedFor(pawn2, pawn, false, false, GuestStatus.Prisoner);
         var job = JobMaker.MakeJob(Job, pawn2, t2);
         job.count = 1;
         PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.Capturing, KnowledgeAmount.Total);
@@ -283,6 +321,16 @@ public class WorkGiver_CapturePrisoners_FirstAid : WorkGiver_CapturePrisoners
             return pawn.CanReserve(building_Bed, 1, -1, null, forced);
         }
 
+        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
+        if (StartUp.ArrestHere && StartUp.settings.doArrestFirst && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Warden) && !pawn2.IsPrisoner)
+        {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, will arrest in place because Arrest Here is loaded");
+            }
+            return true;
+        }
+
         Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
             MessageTypeDefOf.RejectInput, false);
         if (StartUp.settings.debug)
@@ -322,6 +370,21 @@ public class WorkGiver_CapturePrisoners_FirstAid : WorkGiver_CapturePrisoners
                 }
                 return JobMaker.MakeJob(StartUp.CP_FirstAid, pawn2);
             }
+        }
+
+        if (t2 == null)
+        {
+            t2 = RestUtility.FindBedFor(pawn2, pawn, false, true, GuestStatus.Prisoner);
+        }
+
+        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
+        if (t2 == null)
+        {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, arresting in place");
+            }
+            return ArrestInPlace(pawn, pawn2);
         }
 
         var job = JobMaker.MakeJob(Job, pawn2, t2);
@@ -393,6 +456,16 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
             return pawn.CanReserve(building_Bed, 1, -1, null, forced);
         }
 
+        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
+        if (StartUp.ArrestHere && StartUp.settings.doArrestFirst && !pawn.WorkTypeIsDisabled(WorkTypeDefOf.Warden) && !pawn2.IsPrisoner)
+        {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, will arrest in place because Arrest Here is loaded");
+            }
+            return true;
+        }
+
         Messages.Message("CannotCapture".Translate() + ": " + "NoPrisonerBed".Translate(), pawn2,
             MessageTypeDefOf.RejectInput, false);
         if (StartUp.settings.debug)
@@ -453,6 +526,21 @@ public class WorkGiver_CapturePrisoners_CE : WorkGiver_CapturePrisoners
                 }
 
             }
+        }
+
+        if (t2 == null)
+        {
+            t2 = RestUtility.FindBedFor(pawn2, pawn, false, true, GuestStatus.Prisoner);
+        }
+
+        // 没有可用囚犯床：原版抓捕必须把目标搬到囚犯床，这里退化为原地逮捕
+        if (t2 == null)
+        {
+            if (StartUp.settings.debug)
+            {
+                Log.Message($"[Smarter Capture] No prisoner bed for {pawn2.Name}, arresting in place");
+            }
+            return ArrestInPlace(pawn, pawn2);
         }
 
         var job = JobMaker.MakeJob(Job, pawn2, t2);
